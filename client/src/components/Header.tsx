@@ -45,15 +45,17 @@ const Header: FC<{}> = () => {
             {!jwt && <Nav.Link href="/login">Login</Nav.Link>}
             {jwtData &&
               <NavDropdown title={jwtData.uid} align="end">
-                <NavDropdown.Item href="/help">
-                  ヘルプ
-                </NavDropdown.Item>
                 <NavDropdown.Item href="/user">
                   ユーザー設定
                 </NavDropdown.Item>
                 {jwtData.groups.includes("manager") &&
                   <NavDropdown.Item href="/admin">
-                    管理者設定
+                    ユーザー管理
+                  </NavDropdown.Item>
+                }
+                {jwtData.groups.includes("manager") &&
+                  <NavDropdown.Item href="/token">
+                    新規登録用Token
                   </NavDropdown.Item>
                 }
                 <NavDropdown.Divider />

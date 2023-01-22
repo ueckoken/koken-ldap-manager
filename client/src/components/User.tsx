@@ -1,4 +1,5 @@
 import axios from "axios";
+import router from "next/router";
 import { FC, useEffect, useState } from "react";
 import { Card, Form, InputGroup, Button } from "react-bootstrap";
 
@@ -56,18 +57,14 @@ const User: FC<{ jwt: string | null }> = ({ jwt }) => {
         Authorization: `Bearer ${jwt}`,
       },
       data: {
-        firstName,
-        lastName,
-        discordId,
-        email
+        firstName: firstName,
+        lastName: lastName,
+        discordId: discordId,
+        email: email
       },
     });
     alert("ユーザー情報を変更しました");
-    const data = res.data;
-    setfirstName(data.firstName);
-    setlastName(data.lastName);
-    setDiscordId(data.discordId);
-    setEmail(data.email);
+    router.push("/user");
     if (password != "") {
       if (password != confirmPassword) {
         alert("パスワードが一致しません");
@@ -157,7 +154,7 @@ const User: FC<{ jwt: string | null }> = ({ jwt }) => {
                 <Form.Label>パスワード(確認用)</Form.Label>
                 <Form.Control type="password" onChange={(e) => setConfirmPassword(e.target.value)} />
               </Form.Group>
-              <Button variant="primary" className="w-100">
+              <Button variant="primary" className="w-100" onClick={updateUserInfo}>
                 更新
               </Button>
             </Form>
