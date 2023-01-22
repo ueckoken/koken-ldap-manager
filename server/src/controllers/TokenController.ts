@@ -1,7 +1,8 @@
 import {
   JsonController,
   Get,
-  QueryParam
+  QueryParam,
+  Authorized
 } from 'routing-controllers';
 
 import { generateToken, verifyToken } from '../utils/token';

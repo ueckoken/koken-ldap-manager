@@ -1,9 +1,70 @@
-import { FC } from "react";
+import { FC, useEffect, useState } from "react";
+import { Container, Nav, NavDropdown, Navbar } from "react-bootstrap";
+import jwt_decode from "jwt-decode";
 
 const Header: FC<{}> = () => {
+
+  const [jwt, setJwt] = useState<string | null>(null)
+  const [jwtData, setJwtData] = useState<any>("")
+
+  useEffect(() => {
+    if (!jwt) return;
+    const decoded: any = jwt_decode(jwt);
+    setJwtData(decoded)
+  }, [jwt])
+
+  useEffect(() => {
+    const token = localStorage.getItem("token")
+    if (!token) return
+    setJwt(token)
+  }, [])
+
+  const onClickLogout = () => {
+    setJwt(null);
+    localStorage.removeItem("token");
+    // redirect to home
+    window.location.href = "/";
+  }
+
   return (
     <header>
-      <h1>工研統合認証サンプル </h1>
+      <Navbar bg="light" variant="light">
+        <Container fluid>
+          <Navbar.Brand href="/">
+            <img
+              alt=""
+              src="/logo.svg"
+              width="30"
+              height="30"
+              className="d-inline-block align-top"
+            />{' '}
+            KokenLdapManager
+          </Navbar.Brand>
+          <Navbar.Toggle />
+          <Navbar.Collapse className="justify-content-end">
+            {!jwt && <Nav.Link href="/login">Login</Nav.Link>}
+            {jwtData &&
+              <NavDropdown title={jwtData.uid} align="end">
+                <NavDropdown.Item href="/help">
+                  ヘルプ
+                </NavDropdown.Item>
+                <NavDropdown.Item href="/user">
+                  ユーザー設定
+                </NavDropdown.Item>
+                {jwtData.groups.includes("manager") &&
+                  <NavDropdown.Item href="/admin">
+                    管理者設定
+                  </NavDropdown.Item>
+                }
+                <NavDropdown.Divider />
+                <NavDropdown.Item onClick={onClickLogout}>
+                  ログアウト
+                </NavDropdown.Item>
+              </NavDropdown>
+            }
+          </Navbar.Collapse>
+        </Container>
+      </Navbar>
     </header>
   );
 }

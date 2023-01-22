@@ -33,7 +33,7 @@ export class UserController {
     return userInfo;
   }
 
-  @Post('/register')
+  @Post('/register/token')
   async registerUser(
     @BodyParam("username", { required: true }) username: string,
     @BodyParam("firstName", { required: true }) firstName: string,
@@ -57,7 +57,7 @@ export class UserController {
     return user;
   }
 
-  @Post('/create')
+  @Post('/register')
   @Authorized("manager")
   async createUser(
     @BodyParam("username", { required: true }) username: string,
@@ -103,7 +103,7 @@ export class UserController {
     return "OK"
   }
 
-  @Post('/updatePassword/:username')
+  @Put('/password/:username')
   @Authorized("manager")
   async updateUserPasswordByManager(
     @BodyParam("password", { required: true }) password: string,
@@ -113,7 +113,7 @@ export class UserController {
     return "OK"
   }
 
-  @Post('/updateuser/:username')
+  @Put('/profile/:username')
   @Authorized("manager")
   async updateUser(
     @BodyParam("firstName", { required: true }) firstName: string,

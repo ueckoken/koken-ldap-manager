@@ -1,6 +1,7 @@
 import User from "@/components/User";
 import { FC, useEffect, useState } from "react";
 import axios from "axios";
+import { Button, Card, Form } from "react-bootstrap";
 
 const LoginPage: FC<{}> = () => {
   const [jwt, setJwt] = useState<string | null>(null);
@@ -24,33 +25,32 @@ const LoginPage: FC<{}> = () => {
     if (res.data.httpCode && res.data.httpCode != 200) { alert(res.data.message); return; }
     const token = res.data.token;
     setJwt(token);
-    alert("Login success")
     localStorage.setItem("token", token);
-  }
-
-  const onClickLogout = () => {
-    setJwt(null);
-    localStorage.removeItem("token");
+    // redirect to home
+    window.location.href = "/";
   }
 
   return (
-    <>
-      <h1>Login</h1>
-      <input
-        type="text"
-        name="username"
-        placeholder="username"
-        onChange={(e) => setUserId(e.target.value)}
-      />
-      <input
-        type="password"
-        name="password"
-        placeholder="password"
-        onChange={(e) => setPassowrd(e.target.value)}
-      />
-      <button onClick={onClickLogin}>Login</button>
-      <button onClick={onClickLogout}>Logout</button>
-    </>
+    <div className="pt-3">
+      <h5 className="text-center">ログイン</h5>
+      <Card style={{ width: '20rem' }} className="mx-auto">
+        <Card.Body>
+          <Form>
+            <Form.Group className="mb-3">
+              <Form.Label>ユーザーID</Form.Label>
+              <Form.Control type="text" onChange={(e) => setUserId(e.target.value)} />
+            </Form.Group>
+            <Form.Group className="mb-3">
+              <Form.Label>パスワード</Form.Label>
+              <Form.Control type="password" onChange={(e) => setPassowrd(e.target.value)} />
+            </Form.Group>
+            <Button variant="primary" className="w-100" onClick={onClickLogin}>
+              ログイン
+            </Button>
+          </Form>
+        </Card.Body>
+      </Card>
+    </div>
   );
 }
 
