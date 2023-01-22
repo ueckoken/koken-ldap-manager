@@ -62,7 +62,8 @@ export async function getAllusers(): Promise<LdapUser[]> {
       "givenName",
       "sn",
       "uid",
-      "displayName"
+      "displayName",
+      "mail"
     ],
     options: {
       filter: "(objectClass=posixAccount)",
@@ -101,7 +102,8 @@ export async function getUser(uid: string): Promise<LdapUser> {
       "givenName",
       "sn",
       "uid",
-      "displayName"
+      "displayName",
+      "mail"
     ],
     options: {
       filter: "(uid=" + uid + ")",

@@ -10,7 +10,7 @@ import { AuthController } from './controllers/AuthController';
 import { TokenController } from './controllers/TokenController';
 import jwt from 'jsonwebtoken';
 
-const PORT = 3000;
+const PORT = 8000;
 
 async function bootstrap() {
   const app = express();

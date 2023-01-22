@@ -11,12 +11,13 @@ import {
   BodyParam,
   Param,
   HttpError,
+  Put,
 } from 'routing-controllers';
 
 @JsonController('/user')
 export class UserController {
   @Authorized("manager")
-  @Get('/all')
+  @Get('/list')
   async getAllUser(
   ): Promise<LdapUser[]> {
     const users = await getAllusers();
@@ -27,7 +28,7 @@ export class UserController {
   @Get('/profile')
   async getProfile(
     @CurrentUser({ required: true }) user: any
-  ): Promise<any> {
+  ): Promise<LdapUser> {
     const userInfo = await getUser(user.uid);
     return userInfo;
   }
@@ -92,11 +93,11 @@ export class UserController {
     }
   }
 
-  @Post('/updateMyPassword')
+  @Put('/password')
   @Authorized()
   async updateUserPassword(
     @CurrentUser({ required: true }) user: any,
-    @BodyParam("newPassword", { required: true }) password: string,
+    @BodyParam("password", { required: true }) password: string,
   ): Promise<any> {
     await updateUserPassword(user.uid, password)
     return "OK"
@@ -105,7 +106,7 @@ export class UserController {
   @Post('/updatePassword/:username')
   @Authorized("manager")
   async updateUserPasswordByManager(
-    @BodyParam("newPassword", { required: true }) password: string,
+    @BodyParam("password", { required: true }) password: string,
     @Param("username") username: string,
   ): Promise<any> {
     await updateUserPassword(username, password)
@@ -125,7 +126,7 @@ export class UserController {
     return "OK"
   }
 
-  @Post('/updateprofile')
+  @Put('/profile')
   @Authorized()
   async updateProfile(
     @CurrentUser({ required: true }) user: any,
