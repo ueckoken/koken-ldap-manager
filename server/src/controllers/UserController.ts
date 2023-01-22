@@ -1,6 +1,6 @@
-require('dotenv').config();
 import { addUserToGroup } from '../models/GroupModel';
 import { createNewUser, getAllusers, getUser, updateUser, updateUserPassword } from '../models/UserModel';
+import { verifyToken } from '../utils/token';
 import { LdapUser } from './../types/LdapUser.d';
 import {
   JsonController,
@@ -10,10 +10,8 @@ import {
   Post,
   BodyParam,
   Param,
-  QueryParam,
   HttpError,
 } from 'routing-controllers';
-import totp from "totp-generator";
 
 @JsonController('/user')
 export class UserController {
@@ -44,15 +42,9 @@ export class UserController {
     @BodyParam("token", { required: true }) token: string,
     @BodyParam("password", { required: true }) password: string,
   ): Promise<any> {
+
     // verify token
-    const currentToken = totp(String(process.env["TOTP_TOKEN"]), {
-      digits: 8,
-      algorithm: "SHA-512",
-      period: 60 * 60 * 60 * 3, // 3時間
-      timestamp: new Date().getTime(),
-    });
-    if (token !== currentToken) {
-      // Tokenが正しくない場合は拒否する
+    if (!verifyToken(token)) {
       throw new HttpError(401, "Invalid token");
     }
     const groups = ["Domain Users", "member"];
