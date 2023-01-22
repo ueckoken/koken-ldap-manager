@@ -13,7 +13,6 @@ const UserPage: FC<{}> = () => {
 
   return (
     <>
-      <h1>User</h1>
       <User jwt={jwt} />
     </>
   );

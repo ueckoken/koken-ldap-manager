@@ -5,17 +5,6 @@ import jwt_decode from "jwt-decode";
 
 const UserList: FC<{ jwt: string | null }> = ({ jwt }) => {
   const [users, setUsers] = useState<any[]>([]);
-
-  useEffect(() => {
-    if (!jwt) return;
-    const decoded: any = jwt_decode(jwt);
-    console.log(decoded);
-    if (!decoded.groups.includes("manager")) {
-      alert("You are not admin");
-      window.location.href = "/user";
-    }
-  })
-
   useEffect(() => {
     if (!jwt) return;
     (async () => {

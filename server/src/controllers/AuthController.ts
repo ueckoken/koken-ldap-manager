@@ -31,6 +31,8 @@ export class AuthController {
         pass: password
       })
       const userGroups = await getUserGroup(username);
+      if (!userGroups)
+        return new HttpError(500, "Group not found")
       const userGroupNames: string[] = userGroups.map((group) => group.name);
       const token = jwt.sign({
         exp: Math.floor(Date.now() / 1000) + (60 * 60),

@@ -1,9 +1,8 @@
 import axios from "axios";
 import { FC, useEffect, useState } from "react";
-import jwt_decode from "jwt-decode";
 
 const Token: FC<{ jwt: string | null }> = ({ jwt }) => {
-  const [token, setToken] = useState<string>("");
+  const [token, setToken] = useState<string | undefined>();
   useEffect(() => {
     if (!jwt) return;
     (async () => {
@@ -16,7 +15,7 @@ const Token: FC<{ jwt: string | null }> = ({ jwt }) => {
       const data = res.data;
       setToken(data.token);
     })();
-  }, []);
+  }, [jwt]);
 
   return (
     <>

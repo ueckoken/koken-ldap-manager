@@ -12,7 +12,7 @@ const config: IClientConfig = {
   pass: adminPassword
 };
 
-export async function getAllgroups(): Promise<any> {
+export async function getAllgroups(): Promise<LdapGroup[]> {
   const client = new Client(config);
   await client.bind({
     user: "cn=admin,dc=ldap,dc=ueckoken,dc=club",
@@ -38,27 +38,32 @@ export async function getAllgroups(): Promise<any> {
   return groups
 }
 
-export async function getUserGroup(uid: string) {
+export async function getUserGroup(uid: string): Promise<LdapGroup[] | undefined> {
   const client = new Client(config);
-  const results = await client.queryAttributes({
-    base: "ou=group,dc=ldap,dc=ueckoken,dc=club",
-    attributes: ["*"],
-    options: {
-      scope: "sub",
-      filter: "(memberUid=" + uid + ")"
+  try {
+    const results = await client.queryAttributes({
+      base: "ou=group,dc=ldap,dc=ueckoken,dc=club",
+      attributes: ["*"],
+      options: {
+        scope: "sub",
+        filter: "(memberUid=" + uid + ")"
+      }
+    });
+    let groups: LdapGroup[] = [];
+    let data: any;
+    for (data of results) {
+      groups.push({
+        name: data.cn,
+        gid: Number(data.gidNumber),
+        members: data.memberUid
+      } as LdapGroup)
     }
-  });
-  let groups: LdapGroup[] = [];
-  let data: any;
-  for (data of results) {
-    groups.push({
-      name: data.cn,
-      gid: Number(data.gidNumber),
-      members: data.memberUid
-    } as LdapGroup)
+    client.unbind();
+    return groups
+  } catch (error) {
+    if (error instanceof Error)
+      throw new Error(error.message)
   }
-  client.unbind();
-  return groups
 }
 
 export async function addUserToGroup(uid: string, groupName: string) {
@@ -73,8 +78,9 @@ export async function addUserToGroup(uid: string, groupName: string) {
         }
       }]
     })
-  } catch (e) {
-    throw e
+  } catch (error) {
+    if (error instanceof Error)
+      throw new Error(error.message)
   }
   client.unbind();
 }
@@ -91,8 +97,9 @@ export async function removeUserFromGroup(uid: string, groupName: string) {
         }
       }]
     })
-  } catch (e) {
-    throw e
+  } catch (error) {
+    if (error instanceof Error)
+      throw new Error(error.message)
   }
   client.unbind();
 }

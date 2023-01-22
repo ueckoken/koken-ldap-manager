@@ -1,3 +1,4 @@
+import { GroupController } from './controllers/GroupController';
 import 'reflect-metadata';
 import express from 'express';
 import bodyParser from 'body-parser';
@@ -21,7 +22,8 @@ async function bootstrap() {
     controllers: [
       UserController,
       AuthController,
-      TokenController
+      TokenController,
+      GroupController
     ],
     authorizationChecker: async (action: Action, roles: string[]): Promise<boolean> => {
       const token = action.request.headers.authorization.split(' ')[1];

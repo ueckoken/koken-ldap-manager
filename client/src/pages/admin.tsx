@@ -9,7 +9,7 @@ const AdminPage: FC<{}> = () => {
     const token = localStorage.getItem("token")
     if (!token) return
     setJwt(token)
-  })
+  }, [jwt])
 
   return (
     <>

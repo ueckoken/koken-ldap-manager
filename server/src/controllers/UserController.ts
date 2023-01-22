@@ -49,12 +49,17 @@ export class UserController {
       throw new HttpError(401, "Invalid token");
     }
     const groups = ["Domain Users", "member"];
-    const user = await createNewUser(username, firstName, lastName, password, discordId, email);
-    for (let group of groups) {
-      await addUserToGroup(username, group)
-      user.groups.push(group)
+    try {
+      const user = await createNewUser(username, firstName, lastName, password, discordId, email);
+      for (let group of groups) {
+        await addUserToGroup(username, group)
+        user.groups.push(group)
+      }
+      return user;
+    } catch (error) {
+      if (error instanceof Error)
+        throw new HttpError(500, error.message)
     }
-    return user;
   }
 
   @Post('/register')
