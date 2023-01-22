@@ -13,7 +13,7 @@ const UserPage: FC<{}> = () => {
 
   return (
     <>
-      <User jwt={jwt} />
+      <User jwt={jwt} isAdmin={false} targetUser={null} />
     </>
   );
 }

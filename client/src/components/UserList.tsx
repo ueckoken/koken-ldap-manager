@@ -1,7 +1,7 @@
 import axios from "axios";
 import { FC, useEffect, useState } from "react";
 import { Table } from "react-bootstrap";
-import jwt_decode from "jwt-decode";
+import Link from 'next/link'
 
 const UserList: FC<{ jwt: string | null }> = ({ jwt }) => {
   const [users, setUsers] = useState<any[]>([]);
@@ -50,6 +50,9 @@ const UserList: FC<{ jwt: string | null }> = ({ jwt }) => {
               <td>{user.discordId}</td>
               <td>{user.email}</td>
               <td>{user.groups.join(", ")}</td>
+              <td>
+                <Link href={"/admin/" + user.username}>Edit</Link>
+              </td>
             </tr>
           ))}
         </tbody>

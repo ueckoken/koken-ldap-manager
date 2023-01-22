@@ -2,8 +2,9 @@ import axios from "axios";
 import router from "next/router";
 import { FC, useEffect, useState } from "react";
 import { Card, Form, InputGroup, Button } from "react-bootstrap";
+import jwt_decode from "jwt-decode";
 
-const User: FC<{ jwt: string | null }> = ({ jwt }) => {
+const User: FC<{ jwt: string | null, isAdmin: boolean, targetUser: string | null }> = ({ jwt, isAdmin, targetUser }) => {
   const [firstName, setfirstName] = useState<string>("");
   const [lastName, setlastName] = useState<string>("");
   const [uid, setUid] = useState<string>("");
@@ -28,13 +29,14 @@ const User: FC<{ jwt: string | null }> = ({ jwt }) => {
       let data0 = res0.data;
       data0 = data0.filter((group: string) => group !== "Domain Users");
       setDefinedGroups(data0);
-
-      const res: any = await axios("http://localhost:8000/user/profile", {
-        method: "GET",
-        headers: {
-          Authorization: `Bearer ${jwt}`,
-        },
-      });
+      const res: any = await axios(
+        isAdmin ? `http://localhost:8000/user/profile/${targetUser}` : "http://localhost:8000/user/profile"
+        , {
+          method: "GET",
+          headers: {
+            Authorization: `Bearer ${jwt}`,
+          },
+        });
       const data = res.data;
       // remove Domain Users
       data.groups = data.groups.filter((group: string) => group !== "Domain Users");
@@ -51,20 +53,26 @@ const User: FC<{ jwt: string | null }> = ({ jwt }) => {
 
   const updateUserInfo = async () => {
     if (!jwt) return;
-    const res: any = await axios("http://localhost:8000/user/profile", {
-      method: "PUT",
-      headers: {
-        Authorization: `Bearer ${jwt}`,
-      },
-      data: {
-        firstName: firstName,
-        lastName: lastName,
-        discordId: discordId,
-        email: email
-      },
-    });
+    const res: any = await axios(
+      isAdmin ? `http://localhost:8000/user/profile/${targetUser}` : "http://localhost:8000/user/profile"
+      , {
+        method: "PUT",
+        headers: {
+          Authorization: `Bearer ${jwt}`,
+        },
+        data: {
+          firstName: firstName,
+          lastName: lastName,
+          discordId: discordId,
+          email: email,
+          groups: groups
+        },
+      });
     alert("ユーザー情報を変更しました");
-    router.push("/user");
+    if (isAdmin)
+      router.push("/admin/" + targetUser);
+    else
+      router.push("/user");
     if (password != "") {
       if (password != confirmPassword) {
         alert("パスワードが一致しません");
@@ -74,15 +82,17 @@ const User: FC<{ jwt: string | null }> = ({ jwt }) => {
         alert("パスワードは6文字以上にしてください");
         return;
       }
-      const res: any = await axios("http://localhost:8000/user/password", {
-        method: "PUT",
-        headers: {
-          Authorization: `Bearer ${jwt}`,
-        },
-        data: {
-          password
-        },
-      });
+      const res: any = await axios(
+        isAdmin ? `http://localhost:8000/user/password/${targetUser}` : "http://localhost:8000/user/password"
+        , {
+          method: "PUT",
+          headers: {
+            Authorization: `Bearer ${jwt}`,
+          },
+          data: {
+            password
+          },
+        });
       alert("パスワードを変更しました");
       setPassword("");
     }
@@ -109,7 +119,7 @@ const User: FC<{ jwt: string | null }> = ({ jwt }) => {
                   definedGroups.map((group: string) => {
                     return (
                       <Form.Check
-                        disabled
+                        disabled={!isAdmin}
                         key={group}
                         type="checkbox"
                         label={group}

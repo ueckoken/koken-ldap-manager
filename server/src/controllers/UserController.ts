@@ -1,4 +1,4 @@
-import { addUserToGroup } from '../models/GroupModel';
+import { addUserToGroup, removeUserFromGroup } from '../models/GroupModel';
 import { createNewUser, getAllusers, getUser, updateUser, updateUserPassword } from '../models/UserModel';
 import { verifyToken } from '../utils/token';
 import { LdapUser } from './../types/LdapUser.d';
@@ -30,6 +30,15 @@ export class UserController {
     @CurrentUser({ required: true }) user: any
   ): Promise<LdapUser> {
     const userInfo = await getUser(user.uid);
+    return userInfo;
+  }
+
+  @Authorized("manager")
+  @Get('/profile/:username')
+  async getUserProfile(
+    @Param("username") username: string
+  ): Promise<LdapUser> {
+    const userInfo = await getUser(username);
     return userInfo;
   }
 
@@ -125,9 +134,22 @@ export class UserController {
     @BodyParam("lastName", { required: true }) lastName: string,
     @BodyParam("discordId", { required: true }) discordId: string,
     @BodyParam("email", { required: true }) email: string,
+    @BodyParam("groups", { required: true }) groups: string[],
     @Param("username") username: string
   ): Promise<any> {
     await updateUser(username, discordId, email, firstName, lastName);
+    // update groups
+    const user = await getUser(username);
+    const oldGroups = user.groups;
+    const newGroups = groups;
+    const addGroups = newGroups.filter(x => !oldGroups.includes(x));
+    const removeGroups = oldGroups.filter(x => !newGroups.includes(x));
+    for (let group of addGroups) {
+      await addUserToGroup(username, group)
+    }
+    for (let group of removeGroups) {
+      await removeUserFromGroup(username, group)
+    }
     return "OK"
   }
 
