@@ -9,6 +9,10 @@ WORKDIR /app
 COPY --from=deps /app/node_modules /app/node_modules
 COPY . /app
 
+# Hardcode the API and site URLs for the client
+ENV NEXT_PUBLIC_API_BASEURL=http://localhost:8000
+ENV NEXT_PUBLIC_SITE_BASEURL=http://localhost:3000
+
 RUN yarn build
 
 FROM gcr.io/distroless/nodejs:16 AS runner
@@ -18,8 +22,6 @@ ENV NEXT_TELEMETRY_DISABLED 1
 COPY --from=builder --chown=nonroot:nonroot /app/public ./public
 COPY --from=builder --chown=nonroot:nonroot /app/.next/standalone ./
 COPY --from=builder --chown=nonroot:nonroot /app/.next/static ./.next/static
-
-ENV API_BASEURL=http://localhost:3000
 
 EXPOSE 3000
 

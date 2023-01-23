@@ -1,0 +1,15 @@
+version: "3.7"
+
+services:
+  api:
+    build: ./server
+    # image: "ghcr.io/ueckoken/koken-ldap-manager-api:b459656-1674458958"
+    ports:
+      - "8000:3000"
+    env_file:
+      - .env
+  client:
+    build: ./client
+    # image: "ghcr.io/ueckoken/koken-ldap-manager-client:b459656-1674458963"
+    ports:
+      - "3000:3000"
