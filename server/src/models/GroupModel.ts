@@ -1,5 +1,4 @@
 import { LdapGroup } from './../types/LdapGroup.d';
-require('dotenv').config();
 
 import { IClientConfig, Client } from "ldap-ts-client";
 

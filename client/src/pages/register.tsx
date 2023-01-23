@@ -21,7 +21,7 @@ export default function RegisterPage() {
     if (!token) return;
     (async () => {
       // veridate token
-      const res = await axios(`http://localhost:8000/token/verify?token=${token}`, {
+      const res = await axios(`${process.env["NEXT_PUBLIC_API_BASEURL"]}/token/verify?token=${token}`, {
         method: "GET"
       });
       console.log(res);
@@ -47,7 +47,7 @@ export default function RegisterPage() {
   const onClickRegister = async () => {
     if (!checkPassword(password)) return;
     try {
-      const res = await axios("http://localhost:8000/user/register/token", {
+      const res = await axios(`${process.env["NEXT_PUBLIC_API_BASEURL"]}/user/register/token`, {
         method: "POST",
         data: {
           username,

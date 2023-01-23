@@ -15,7 +15,7 @@ const LoginPage: FC<{}> = () => {
   }, [])
 
   const onClickLogin = async () => {
-    const res: any = await axios("http://localhost:8000/auth/login", {
+    const res: any = await axios(`${process.env["NEXT_PUBLIC_API_BASEURL"]}/auth/login`, {
       method: "POST",
       data: {
         username: userId,

@@ -12,17 +12,12 @@ COPY . /app
 RUN yarn build
 
 FROM gcr.io/distroless/nodejs:16 AS runner
-ENV NODE_ENV production
-ENV NEXT_TELEMETRY_DISABLED 1
 
-COPY --from=builder --chown=nonroot:nonroot /app/public ./public
-COPY --from=builder --chown=nonroot:nonroot /app/.next/standalone ./
-COPY --from=builder --chown=nonroot:nonroot /app/.next/static ./.next/static
-
-ENV API_BASEURL=http://localhost:3000
+COPY --from=builder --chown=nonroot:nonroot /app/build ./
+COPY --from=builder --chown=nonroot:nonroot /app/node_modules ./node_modules
 
 EXPOSE 3000
 
 ENV PORT 3000
 USER nonroot
-CMD ["server.js"]
+CMD ["app.js"]

@@ -20,7 +20,7 @@ const User: FC<{ jwt: string | null, isAdmin: boolean, targetUser: string | null
   useEffect(() => {
     if (!jwt) return;
     (async () => {
-      const res0: any = await axios("http://localhost:8000/group/list", {
+      const res0: any = await axios(`${process.env["NEXT_PUBLIC_API_BASEURL"]}/group/list`, {
         method: "GET",
         headers: {
           Authorization: `Bearer ${jwt}`,
@@ -30,7 +30,7 @@ const User: FC<{ jwt: string | null, isAdmin: boolean, targetUser: string | null
       data0 = data0.filter((group: string) => group !== "Domain Users");
       setDefinedGroups(data0);
       const res: any = await axios(
-        isAdmin ? `http://localhost:8000/user/profile/${targetUser}` : "http://localhost:8000/user/profile"
+        isAdmin ? `${process.env["NEXT_PUBLIC_API_BASEURL"]}/user/profile/${targetUser}` : `${process.env["NEXT_PUBLIC_API_BASEURL"]}/user/profile`
         , {
           method: "GET",
           headers: {
@@ -54,7 +54,7 @@ const User: FC<{ jwt: string | null, isAdmin: boolean, targetUser: string | null
   const updateUserInfo = async () => {
     if (!jwt) return;
     const res: any = await axios(
-      isAdmin ? `http://localhost:8000/user/profile/${targetUser}` : "http://localhost:8000/user/profile"
+      isAdmin ? `${process.env["NEXT_PUBLIC_API_BASEURL"]}/user/profile/${targetUser}` : `${process.env["NEXT_PUBLIC_API_BASEURL"]}/user/profile`
       , {
         method: "PUT",
         headers: {
@@ -83,7 +83,7 @@ const User: FC<{ jwt: string | null, isAdmin: boolean, targetUser: string | null
         return;
       }
       const res: any = await axios(
-        isAdmin ? `http://localhost:8000/user/password/${targetUser}` : "http://localhost:8000/user/password"
+        isAdmin ? `${process.env["NEXT_PUBLIC_API_BASEURL"]}/user/password/${targetUser}` : `${process.env["NEXT_PUBLIC_API_BASEURL"]}/user/password`
         , {
           method: "PUT",
           headers: {

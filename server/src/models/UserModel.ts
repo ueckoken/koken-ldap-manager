@@ -1,5 +1,3 @@
-require('dotenv').config();
-
 import { generateNTLMHash } from "../utils/hash";
 import { IClientConfig, Client } from "ldap-ts-client";
 import { LdapUser } from "../types/LdapUser";

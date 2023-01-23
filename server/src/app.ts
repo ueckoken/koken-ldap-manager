@@ -10,13 +10,15 @@ import { UserController } from './controllers/UserController';
 import { AuthController } from './controllers/AuthController';
 import { TokenController } from './controllers/TokenController';
 import jwt from 'jsonwebtoken';
+import cors from 'cors';
 
-const PORT = 8000;
+const PORT = 3000;
 
 async function bootstrap() {
   const app = express();
 
   app.use(bodyParser.json());
+  app.use(cors())
 
   useExpressServer(app, {
     controllers: [

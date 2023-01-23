@@ -8,7 +8,7 @@ const UserList: FC<{ jwt: string | null }> = ({ jwt }) => {
   useEffect(() => {
     if (!jwt) return;
     (async () => {
-      const res: any = await axios("http://localhost:8000/user/list", {
+      const res: any = await axios(`${process.env["NEXT_PUBLIC_API_BASEURL"]}/user/list`, {
         method: "GET",
         headers: {
           Authorization: `Bearer ${jwt}`,

@@ -6,7 +6,7 @@ const Token: FC<{ jwt: string | null }> = ({ jwt }) => {
   useEffect(() => {
     if (!jwt) return;
     (async () => {
-      const res: any = await axios("http://localhost:8000/token/issue", {
+      const res: any = await axios(`${process.env["NEXT_PUBLIC_API_BASEURL"]}/token/issue`, {
         method: "GET",
         headers: {
           Authorization: `Bearer ${jwt}`,
@@ -20,7 +20,7 @@ const Token: FC<{ jwt: string | null }> = ({ jwt }) => {
   return (
     <>
       <p>Token: <code>{token}</code><br />
-        登録URL: <a href={"http://localhost:3000/register?token=" + token} > https://localhost:3000/register?token={token}</a>
+        登録URL: <a href={`${process.env["NEXT_PUBLIC_SITE_BASEURL"]}/register?token=` + token} > https://localhost:3000/register?token={token}</a>
       </p>
     </>
   );
