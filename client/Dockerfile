@@ -10,7 +10,7 @@ COPY --from=deps /app/node_modules /app/node_modules
 COPY . /app
 
 # Hardcode the API and site URLs for the client
-ENV NEXT_PUBLIC_API_BASEURL=https://api.klm.ueckoken.club
+ENV NEXT_PUBLIC_API_BASEURL=https://apiklm.ueckoken.club
 ENV NEXT_PUBLIC_SITE_BASEURL=https://klm.ueckoken.club
 
 RUN yarn build
