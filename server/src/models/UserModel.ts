@@ -77,8 +77,8 @@ export async function getAllusers(): Promise<LdapUser[]> {
     const userGroupNames: string[] = groups.map((group) => group.name);
     users.push({
       fullName: data.cn,
-      firstName: data.givenName,
-      lastName: data.sn,
+      firstName: data.sn,
+      lastName: data.givenName,
       uid: Number(data.uidNumber),
       gid: Number(data.gidNumber),
       discordId: data.displayName,
@@ -116,8 +116,8 @@ export async function getUser(uid: string): Promise<LdapUser> {
   const userGroupNames: string[] = groups.map((group) => group.name);
   const user: LdapUser = {
     fullName: data.cn,
-    firstName: data.givenName,
-    lastName: data.sn,
+    firstName: data.sn,
+    lastName: data.givenName,
     uid: Number(data.uidNumber),
     gid: Number(data.gidNumber),
     discordId: data.displayName,
