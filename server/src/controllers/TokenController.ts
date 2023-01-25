@@ -9,7 +9,7 @@ import { generateToken, verifyToken } from '../utils/token';
 
 @JsonController('/token')
 export class TokenController {
-  @Authorized("manager","service")
+  @Authorized(["manager","service"])
   @Get('/issue')
   async totp(): Promise<any> {
     const token = generateToken()
