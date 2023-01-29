@@ -19,6 +19,16 @@ const Header: FC<{}> = () => {
     setJwt(token)
   }, [])
 
+  useEffect(() => {
+    // remove from localStrorage if jwt expired
+    if (!jwt) return;
+    const decoded: any = jwt_decode(jwt);
+    if (decoded.exp < Date.now() / 1000) {
+      localStorage.removeItem("token");
+      setJwt(null);
+    }
+  })
+
   const onClickLogout = () => {
     setJwt(null);
     localStorage.removeItem("token");
