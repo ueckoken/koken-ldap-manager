@@ -92,17 +92,17 @@ export default function RegisterPage() {
               <Form.Group className="mb-3">
                 <Form.Label>名前</Form.Label>
                 <InputGroup>
-                  <Form.Control type="text" placeholder="工研" onChange={(e) => setFirstName(e.target.value)} />
-                  <Form.Control type="text" placeholder="太郎" onChange={(e) => setLastName(e.target.value)} />
+                  <Form.Control type="text" placeholder="工研" onChange={(e) => setFirstName(e.target.value)} value={firstName} />
+                  <Form.Control type="text" placeholder="太郎" onChange={(e) => setLastName(e.target.value)} value={lastName} />
                 </InputGroup>
               </Form.Group>
               <Form.Group className="mb-3">
                 <Form.Label>Discord ID</Form.Label>
-                <Form.Control type="text" placeholder="kokenuser#1962" onChange={(e) => setDiscordId(e.target.value)} />
+                <Form.Control type="text" placeholder="kokenuser#1962" onChange={(e) => setDiscordId(e.target.value)} value={discordId} />
               </Form.Group>
               <Form.Group className="mb-3">
                 <Form.Label>Eメール</Form.Label>
-                <Form.Control type="email" placeholder="ueckoken@gmail.com" onChange={(e) => setEmail(e.target.value)} />
+                <Form.Control type="email" placeholder="ueckoken@gmail.com" onChange={(e) => setEmail(e.target.value)} value={email} />
               </Form.Group>
               <Form.Group className="mb-3">
                 <Form.Label>パスワード(6文字以上)</Form.Label>
