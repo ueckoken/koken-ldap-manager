@@ -12,6 +12,7 @@ export default function RegisterPage() {
   const firstnameQuery = router.query.firstname;
   const lastnameQuery = router.query.lastname;
   const emailQuery = router.query.email;
+  const discordIdQuery = router.query.discordid;
 
   const [username, setusername] = useState<string>("");
   const [password, setPassowrd] = useState<string>("");
@@ -37,6 +38,7 @@ export default function RegisterPage() {
       if (firstnameQuery) setFirstName(firstnameQuery as string);
       if (lastnameQuery) setLastName(lastnameQuery as string);
       if (emailQuery) setEmail(emailQuery as string);
+      if (discordIdQuery) setDiscordId(discordIdQuery as string);
     })()
   }, [token])
 
