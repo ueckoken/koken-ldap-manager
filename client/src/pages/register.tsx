@@ -86,7 +86,7 @@ export default function RegisterPage() {
             <Form>
               <Form.Group className="mb-3">
                 <Form.Label>ユーザー名(変更不可)</Form.Label>
-                <Form.Control type="text" onChange={(e) => setusername(e.target.value)} placeholder="takumikentaro" />
+                <Form.Control type="text" onChange={(e) => setusername(e.target.value)} placeholder="takumikentaro" value={username} />
                 <small>既に使用されているユーザー名は使えません</small>
               </Form.Group>
               <Form.Group className="mb-3">
