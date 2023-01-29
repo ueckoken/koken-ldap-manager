@@ -8,6 +8,10 @@ import { Button, Card, Form, InputGroup } from "react-bootstrap";
 export default function RegisterPage() {
   const router = useRouter();
   const token = router.query.token;
+  const usernameQuery = router.query.username;
+  const firstnameQuery = router.query.firstname;
+  const lastnameQuery = router.query.lastname;
+  const emailQuery = router.query.email;
 
   const [username, setusername] = useState<string>("");
   const [password, setPassowrd] = useState<string>("");
@@ -29,6 +33,10 @@ export default function RegisterPage() {
         alert("Invalid token");
         router.push("/");
       }
+      if (usernameQuery) setusername(usernameQuery as string);
+      if (firstnameQuery) setFirstName(firstnameQuery as string);
+      if (lastnameQuery) setLastName(lastnameQuery as string);
+      if (emailQuery) setEmail(emailQuery as string);
     })()
   }, [token])
 
