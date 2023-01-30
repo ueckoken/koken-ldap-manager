@@ -53,7 +53,7 @@ const Header: FC<{}> = () => {
           <Navbar.Toggle />
           <Navbar.Collapse className="justify-content-end">
             {!jwt && <Nav.Link href="/login">Login</Nav.Link>}
-            {jwtData &&
+            {(jwtData && jwt) &&
               <NavDropdown title={jwtData.uid} align="end">
                 <NavDropdown.Item href="/user">
                   ユーザー設定
