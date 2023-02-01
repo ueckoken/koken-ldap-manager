@@ -26,6 +26,8 @@ const Header: FC<{}> = () => {
     if (decoded.exp < Date.now() / 1000) {
       localStorage.removeItem("token");
       setJwt(null);
+      // redirect to home
+      window.location.href = "/";
     }
   })
 
