@@ -1,0 +1,28 @@
+name: Build Test Client
+
+defaults:
+  run:
+    working-directory: ./client
+
+on:
+  pull_request:
+    paths:
+      - client/**
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v3
+      - uses: docker/setup-buildx-action@v2
+      - name: Build
+        uses: docker/build-push-action@v3
+        with:
+          context: ./client
+          file: ./client/Dockerfile
+          platforms: linux/amd64
+          push: false
+          tags: ghcr.io/ueckoken/koken-ldap-manager-client
+          cache-from: type=gha
+          cache-to: type=gha,mode=max

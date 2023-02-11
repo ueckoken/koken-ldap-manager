@@ -1,0 +1,28 @@
+name: Build Test API Server
+
+defaults:
+  run:
+    working-directory: ./server
+
+on:
+  pull_request:
+    paths:
+      - server/**
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v3
+      - uses: docker/setup-buildx-action@v2
+      - name: Build
+        uses: docker/build-push-action@v3
+        with:
+          context: ./server
+          file: ./server/Dockerfile
+          platforms: linux/amd64
+          push: false
+          tags: ghcr.io/ueckoken/koken-ldap-manager-api
+          cache-from: type=gha
+          cache-to: type=gha,mode=max
