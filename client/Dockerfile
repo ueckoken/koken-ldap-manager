@@ -15,7 +15,7 @@ ENV NEXT_PUBLIC_SITE_BASEURL=https://klm.ueckoken.club
 
 RUN yarn build
 
-FROM gcr.io/distroless/nodejs:16 AS runner
+FROM gcr.io/distroless/nodejs:18 AS runner
 ENV NODE_ENV production
 ENV NEXT_TELEMETRY_DISABLED 1
 
