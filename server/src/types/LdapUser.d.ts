@@ -8,6 +8,8 @@ export interface LdapUser {
   uid: number;
   discordId: string;
   email: string;
+  studentId: string;
+  telephoneNumber: string;
   groups: string[];
 }
 

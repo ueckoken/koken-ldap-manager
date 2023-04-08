@@ -17,7 +17,7 @@ export default function Home() {
         Koken統合認証は工研の提供する工研の以下のようなサービスを一括して認証するためのものです。
         <ul>
           <li>Koken Wiki</li>
-          <li>Discrodロール認証</li>
+          <li>Discordロール認証</li>
           <li>部室Wifi</li>
           <li>NAS</li>
           <li>サーバー</li>

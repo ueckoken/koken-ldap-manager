@@ -5,7 +5,7 @@ services:
     build: ./server
     # image: "ghcr.io/ueckoken/koken-ldap-manager-api:b459656-1674458958"
     ports:
-      - "8000:3000"
+      - "8000:8000"
     env_file:
       - .env
   client:

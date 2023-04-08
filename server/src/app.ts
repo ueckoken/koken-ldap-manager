@@ -12,7 +12,7 @@ import { TokenController } from './controllers/TokenController';
 import jwt from 'jsonwebtoken';
 import cors from 'cors';
 
-const PORT = 3000;
+const PORT = 8000;
 
 async function bootstrap() {
   const app = express();

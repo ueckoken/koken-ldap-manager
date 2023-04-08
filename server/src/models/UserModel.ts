@@ -61,7 +61,9 @@ export async function getAllusers(): Promise<LdapUser[]> {
       "sn",
       "uid",
       "displayName",
-      "mail"
+      "mail",
+      "telephoneNumber",
+      "employeeNumber"
     ],
     options: {
       filter: "(objectClass=posixAccount)",
@@ -84,7 +86,9 @@ export async function getAllusers(): Promise<LdapUser[]> {
       discordId: data.displayName,
       groups: userGroupNames,
       username: data.uid,
-      email: data.mail
+      email: data.mail,
+      telephoneNumber: data.telephoneNumber,
+      studentId: data.employeeNumber
     } as LdapUser)
   }
   return users
@@ -102,7 +106,9 @@ export async function getUser(uid: string): Promise<LdapUser> {
       "sn",
       "uid",
       "displayName",
-      "mail"
+      "mail",
+      "telephoneNumber",
+      "employeeNumber"
     ],
     options: {
       filter: "(uid=" + uid + ")",
@@ -123,7 +129,9 @@ export async function getUser(uid: string): Promise<LdapUser> {
     discordId: data.displayName,
     groups: userGroupNames,
     username: data.uid,
-    email: data.mail
+    email: data.mail,
+    telephoneNumber: data.telephoneNumber,
+    studentId: data.employeeNumber
   } as LdapUser;
   return user
 }
@@ -134,7 +142,9 @@ export async function createNewUser(
   lastname: string,
   password: string,
   discordId: string,
-  email: string
+  email: string,
+  phonenumber: string,
+  studentid: string
 ): Promise<LdapUser> {
   const client = new Client(config);
   client.bind({
@@ -189,6 +199,10 @@ export async function createNewUser(
         mail: email,
         /* ユーザーID (must be unique) */
         uid: username,
+        /* 電話番号 */
+        telephoneNumber: phonenumber,
+        /* 学籍番号 */
+        employeeNumber: studentid,
         /* ユーザーID (ユーザーが作られた順番に振られる) */
         uidnumber: String(uidNumber),
         /* ユーザパスワード (SHA512でハッシュ済み) */
@@ -242,6 +256,8 @@ export async function createNewUser(
     gid: 1000000,
     discordId: discordId,
     email: email,
+    telephoneNumber: phonenumber,
+    studentId: studentid,
     groups: []
   } as LdapUser;
 }
@@ -288,7 +304,9 @@ export async function updateUser(
   discordId: string,
   email: string,
   firstname: string,
-  lastname: string
+  lastname: string,
+  telephoneNumber: string,
+  studentId: string
 ): Promise<void> {
   const client = new Client(config);
   await client.bind({
@@ -307,7 +325,9 @@ export async function updateUser(
             givenName: lastname,
             sn: firstname,
             cn: `${lastname} ${firstname}`,
-            displayname: discordId
+            displayname: discordId,
+            telephoneNumber: telephoneNumber,
+            employeeNumber: studentId
           }
         }
       ]

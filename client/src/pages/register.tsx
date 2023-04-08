@@ -13,6 +13,8 @@ export default function RegisterPage() {
   const lastnameQuery = router.query.lastname;
   const emailQuery = router.query.email;
   const discordIdQuery = router.query.discordid;
+  const studentidQuery = router.query.studentid;
+  const phonenumberQuery = router.query.phonenumber;
 
   const [username, setusername] = useState<string>("");
   const [password, setPassowrd] = useState<string>("");
@@ -21,6 +23,8 @@ export default function RegisterPage() {
   const [lastName, setLastName] = useState<string>("");
   const [email, setEmail] = useState<string>("");
   const [discordId, setDiscordId] = useState<string>("");
+  const [studentid, setstudentid] = useState<string>("");
+  const [phonenumber, setphonenumber] = useState<string>("");
 
   useEffect(() => {
     if (!token) return;
@@ -39,6 +43,8 @@ export default function RegisterPage() {
       if (lastnameQuery) setLastName(lastnameQuery as string);
       if (emailQuery) setEmail(emailQuery as string);
       if (discordIdQuery) setDiscordId(discordIdQuery as string);
+      if (studentidQuery) setstudentid(studentidQuery as string);
+      if (phonenumberQuery) setphonenumber(phonenumberQuery as string);
     })()
   }, [token])
 
@@ -66,6 +72,8 @@ export default function RegisterPage() {
           lastName,
           email,
           discordId,
+          phonenumber,
+          studentid,
           token
         }
       });
@@ -99,6 +107,14 @@ export default function RegisterPage() {
                 </InputGroup>
               </Form.Group>
               <Form.Group className="mb-3">
+                <Form.Label>学籍番号</Form.Label>
+                <Form.Control type="text" placeholder="2110000" onChange={(e) => setstudentid(e.target.value)} value={studentid} />
+              </Form.Group>
+              <Form.Group className="mb-3">
+                <Form.Label>電話番号(ハイフン無し)</Form.Label>
+                <Form.Control type="text" placeholder="07012345678" onChange={(e) => setphonenumber(e.target.value)} value={phonenumber} />
+              </Form.Group>
+              <Form.Group className="mb-3">
                 <Form.Label>Discord ID</Form.Label>
                 <Form.Control type="text" placeholder="kokenuser#1962" onChange={(e) => setDiscordId(e.target.value)} value={discordId} />
               </Form.Group>
@@ -107,7 +123,7 @@ export default function RegisterPage() {
                 <Form.Control type="email" placeholder="ueckoken@gmail.com" onChange={(e) => setEmail(e.target.value)} value={email} />
               </Form.Group>
               <Form.Group className="mb-3">
-                <Form.Label>パスワード(6文字以上)</Form.Label>
+                <Form.Label>パスワード(6文字以上90文字以下)</Form.Label>
                 <Form.Control type="password" onChange={(e) => setPassowrd(e.target.value)} />
               </Form.Group>
               <Form.Group className="mb-3">

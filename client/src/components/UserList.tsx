@@ -36,6 +36,8 @@ const UserList: FC<{ jwt: string | null }> = ({ jwt }) => {
             <th>gid</th>
             <th>discordId</th>
             <th>email</th>
+            <th>phoneNumber</th>
+            <th>studentId</th>
             <th>groups</th>
           </tr>
         </thead>
@@ -49,6 +51,8 @@ const UserList: FC<{ jwt: string | null }> = ({ jwt }) => {
               <td>{user.gid}</td>
               <td>{user.discordId}</td>
               <td>{user.email}</td>
+              <td>{user.telephoneNumber}</td>
+              <td>{user.studentId}</td>
               <td>{user.groups.join(", ")}</td>
               <td>
                 <Link href={"/admin/" + user.username}>Edit</Link>

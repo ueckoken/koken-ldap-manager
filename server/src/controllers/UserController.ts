@@ -51,6 +51,8 @@ export class UserController {
     @BodyParam("email", { required: true }) email: string,
     @BodyParam("token", { required: true }) token: string,
     @BodyParam("password", { required: true }) password: string,
+    @BodyParam("phonenumber", { required: true }) phonenumber: string,
+    @BodyParam("studentid", { required: true }) studentid: string
   ): Promise<any> {
 
     // verify token
@@ -59,7 +61,7 @@ export class UserController {
     }
     const groups = ["Domain Users", "member"];
     try {
-      const user = await createNewUser(username, firstName, lastName, password, discordId, email);
+      const user = await createNewUser(username, firstName, lastName, password, discordId, email, phonenumber, studentid);
       for (let group of groups) {
         await addUserToGroup(username, group)
         user.groups.push(group)
@@ -79,8 +81,10 @@ export class UserController {
     @BodyParam("lastName", { required: true }) lastName: string,
     @BodyParam("discordId", { required: true }) discordId: string,
     @BodyParam("email", { required: true }) email: string,
+    @BodyParam("phonenumber", { required: true }) phonenumber: string,
+    @BodyParam("studentid", { required: true }) studentid: string,
     @BodyParam("password") password?: string,
-    @BodyParam("groups") groups?: string[],
+    @BodyParam("groups") groups?: string[]
   ): Promise<any> {
     // Passwordの指定がない場合はランダムなパスワードを生成
     let notifyPassword: Boolean = false
@@ -96,7 +100,9 @@ export class UserController {
       groups.push("Domain Users")
 
     const fullName = firstName + " " + lastName
-    const user = await createNewUser(username, firstName, lastName, password, discordId, email);
+    const user = await createNewUser(
+      username, firstName, lastName, password, discordId, email, phonenumber, studentid
+    );
     for (let group of groups) {
       await addUserToGroup(username, group)
       user.groups.push(group)
@@ -134,10 +140,12 @@ export class UserController {
     @BodyParam("lastName", { required: true }) lastName: string,
     @BodyParam("discordId", { required: true }) discordId: string,
     @BodyParam("email", { required: true }) email: string,
+    @BodyParam("telephoneNumber", { required: true }) telephoneNumber: string,
+    @BodyParam("studentId", { required: true }) studentId: string,
     @BodyParam("groups", { required: true }) groups: string[],
     @Param("username") username: string
   ): Promise<any> {
-    await updateUser(username, discordId, email, firstName, lastName);
+    await updateUser(username, discordId, email, firstName, lastName, telephoneNumber, studentId);
     // update groups
     const user = await getUser(username);
     const oldGroups = user.groups;
@@ -161,8 +169,10 @@ export class UserController {
     @BodyParam("lastName", { required: true }) lastName: string,
     @BodyParam("discordId", { required: true }) discordId: string,
     @BodyParam("email", { required: true }) email: string,
+    @BodyParam("telephoneNumber", { required: true }) telephoneNumber: string,
+    @BodyParam("studentId", { required: true }) studentId: string,
   ): Promise<any> {
-    await updateUser(user.uid, discordId, email, firstName, lastName);
+    await updateUser(user.uid, discordId, email, firstName, lastName, telephoneNumber, studentId);
     return "OK"
   }
 }
