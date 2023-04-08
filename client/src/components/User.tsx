@@ -69,7 +69,7 @@ const User: FC<{ jwt: string | null, isAdmin: boolean, targetUser: string | null
           discordId: discordId,
           email: email,
           groups: groups,
-          phonenumber: phonenumber,
+          telephoneNumber: phonenumber,
           studentid: studentid
         },
       });
