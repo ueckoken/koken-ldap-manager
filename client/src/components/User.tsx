@@ -2,7 +2,6 @@ import axios from "axios";
 import router from "next/router";
 import { FC, useEffect, useState } from "react";
 import { Card, Form, InputGroup, Button } from "react-bootstrap";
-import jwt_decode from "jwt-decode";
 
 const User: FC<{ jwt: string | null, isAdmin: boolean, targetUser: string | null }> = ({ jwt, isAdmin, targetUser }) => {
   const [firstName, setfirstName] = useState<string>("");
@@ -16,6 +15,8 @@ const User: FC<{ jwt: string | null, isAdmin: boolean, targetUser: string | null
   const [password, setPassword] = useState<string>("");
   const [confirmPassword, setConfirmPassword] = useState<string>("");
   const [definedGroups, setDefinedGroups] = useState<string[]>([]);
+  const [phonenumber, setPhonenumber] = useState<string>("");
+  const [studentid, setStudentid] = useState<string>("");
 
   useEffect(() => {
     if (!jwt) return;
@@ -48,6 +49,8 @@ const User: FC<{ jwt: string | null, isAdmin: boolean, targetUser: string | null
       setDiscordId(data.discordId);
       setGroups(data.groups);
       setEmail(data.email);
+      setPhonenumber(data.telephoneNumber);
+      setStudentid(data.studentId);
     })();
   }, [jwt]);
 
@@ -65,7 +68,9 @@ const User: FC<{ jwt: string | null, isAdmin: boolean, targetUser: string | null
           lastName: lastName,
           discordId: discordId,
           email: email,
-          groups: groups
+          groups: groups,
+          phonenumber: phonenumber,
+          studentid: studentid
         },
       });
     alert("ユーザー情報を変更しました");
@@ -80,6 +85,10 @@ const User: FC<{ jwt: string | null, isAdmin: boolean, targetUser: string | null
       }
       if (password.length < 6) {
         alert("パスワードは6文字以上にしてください");
+        return;
+      }
+      if (password.length > 90) {
+        alert("パスワードは90文字以上にしてください");
         return;
       }
       const res: any = await axios(
@@ -157,7 +166,15 @@ const User: FC<{ jwt: string | null, isAdmin: boolean, targetUser: string | null
                 <Form.Control type="email" value={email} onChange={(e) => setEmail(e.target.value)} />
               </Form.Group>
               <Form.Group className="mb-3">
-                <Form.Label>パスワード(6文字以上)</Form.Label>
+                <Form.Label>電話番号(ハイフンなし)</Form.Label>
+                <Form.Control type="text" value={phonenumber} onChange={(e) => setPhonenumber(e.target.value)} />
+              </Form.Group>
+              <Form.Group className="mb-3">
+                <Form.Label>学籍番号</Form.Label>
+                <Form.Control type="text" value={studentid} onChange={(e) => setStudentid(e.target.value)} />
+              </Form.Group>
+              <Form.Group className="mb-3">
+                <Form.Label>パスワード(6文字以上90文字以下)</Form.Label>
                 <Form.Control type="password" onChange={(e) => setPassword(e.target.value)} />
               </Form.Group>
               <Form.Group className="mb-3">
