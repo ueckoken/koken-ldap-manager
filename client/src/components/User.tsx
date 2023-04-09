@@ -70,7 +70,7 @@ const User: FC<{ jwt: string | null, isAdmin: boolean, targetUser: string | null
           email: email,
           groups: groups,
           telephoneNumber: phonenumber,
-          studentid: studentid
+          studentId: studentid
         },
       });
     alert("ユーザー情報を変更しました");
