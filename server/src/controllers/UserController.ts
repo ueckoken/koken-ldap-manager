@@ -46,9 +46,13 @@ export class UserController {
   @Get('/exsists/:username')
   async exsistsUser(
     @Param("username") username: string
-  ): Promise<Boolean> {
-    const userInfo = await getUser(username);
-    return userInfo ? true : false;
+  ): Promise<String> {
+    try {
+      const userInfo = await getUser(username);
+      return "true"
+    } catch (e) {
+      return "false"
+    }
   }
 
   @Post('/register/token')
