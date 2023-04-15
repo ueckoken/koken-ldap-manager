@@ -5,7 +5,7 @@ export function generateTOTPToken(): string {
   return totp(String(process.env["TOTP_TOKEN"]), {
     digits: 8,
     algorithm: "SHA-512",
-    period: 60 * 60 * 3, // 3時間の有効期限を設ける
+    period: 60 * 60 * 24, // 24時間の有効期限を設ける
     timestamp: new Date().getTime(),
   });
 }
