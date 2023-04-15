@@ -49,6 +49,7 @@ export class UserController {
   ): Promise<Boolean> {
     try {
       const userInfo = await getUser(username);
+      if (userInfo.uid) return true;
       return true
     } catch (e) {
       return false
