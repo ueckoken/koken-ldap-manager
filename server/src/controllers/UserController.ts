@@ -46,12 +46,12 @@ export class UserController {
   @Get('/exsists/:username')
   async exsistsUser(
     @Param("username") username: string
-  ): Promise<String> {
+  ): Promise<Boolean> {
     try {
       const userInfo = await getUser(username);
-      return "true"
+      return true
     } catch (e) {
-      return "false"
+      return false
     }
   }
 
