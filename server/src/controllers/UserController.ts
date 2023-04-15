@@ -42,6 +42,15 @@ export class UserController {
     return userInfo;
   }
 
+  @Authorized(["manager", "service"])
+  @Get('/exsists/:username')
+  async exsistsUser(
+    @Param("username") username: string
+  ): Promise<Boolean> {
+    const userInfo = await getUser(username);
+    return userInfo ? true : false;
+  }
+
   @Post('/register/token')
   async registerUser(
     @BodyParam("username", { required: true }) username: string,
