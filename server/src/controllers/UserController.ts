@@ -87,9 +87,38 @@ export class UserController {
     }
   }
 
-  @Post('/register')
+  @Post('/register/init')
   @Authorized("manager")
   @Authorized("service")
+  async registerUserAuto(
+    @BodyParam("username", { required: true }) username: string,
+    @BodyParam("firstName", { required: true }) firstName: string,
+    @BodyParam("lastName", { required: true }) lastName: string,
+    @BodyParam("discordId", { required: true }) discordId: string,
+    @BodyParam("email", { required: true }) email: string,
+    @BodyParam("phonenumber", { required: true }) phonenumber: string,
+    @BodyParam("studentid", { required: true }) studentid: string
+  ): Promise<any> {
+    const password = Math.random().toString(36).slice(-8);
+    const groups = ["Domain Users", "member"];
+    try {
+      const user = await createNewUser(username, firstName, lastName, password, discordId, email, phonenumber, studentid);
+      for (let group of groups) {
+        await addUserToGroup(username, group)
+        user.groups.push(group)
+      }
+      return {
+        user: user,
+        password: password
+      }
+    } catch (error) {
+      if (error instanceof Error)
+        throw new HttpError(500, error.message)
+    }
+  }
+
+  @Post('/register')
+  @Authorized("manager")
   async createUser(
     @BodyParam("username", { required: true }) username: string,
     @BodyParam("firstName", { required: true }) firstName: string,
