@@ -89,6 +89,7 @@ export class UserController {
 
   @Post('/register')
   @Authorized("manager")
+  @Authorized("service")
   async createUser(
     @BodyParam("username", { required: true }) username: string,
     @BodyParam("firstName", { required: true }) firstName: string,
