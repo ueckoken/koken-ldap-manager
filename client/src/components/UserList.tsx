@@ -1,24 +1,29 @@
 import axios from "axios";
 import { FC, useEffect, useState } from "react";
 import { Table } from "react-bootstrap";
-import Link from 'next/link'
+import Link from "next/link";
 
 const UserList: FC<{ jwt: string | null }> = ({ jwt }) => {
   const [users, setUsers] = useState<any[]>([]);
   useEffect(() => {
     if (!jwt) return;
     (async () => {
-      const res: any = await axios(`${process.env["NEXT_PUBLIC_API_BASEURL"]}/user/list`, {
-        method: "GET",
-        headers: {
-          Authorization: `Bearer ${jwt}`,
-        },
-      });
+      const res: any = await axios(
+        `${process.env["NEXT_PUBLIC_API_BASEURL"]}/user/list`,
+        {
+          method: "GET",
+          headers: {
+            Authorization: `Bearer ${jwt}`,
+          },
+        }
+      );
       const users = res.data;
       console.log(users);
       // remove Domain Users from groups
       users.forEach((user: any) => {
-        user.groups = user.groups.filter((group: string) => group !== "Domain Users");
+        user.groups = user.groups.filter(
+          (group: string) => group !== "Domain Users"
+        );
       });
       setUsers(users);
     })();

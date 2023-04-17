@@ -3,7 +3,8 @@
   "scripts": {
     "start": "ts-node src/app.ts",
     "build": "tsc",
-    "dev": "nodemon src/app.ts"
+    "dev": "nodemon src/app.ts",
+    "fmt": "prettier --write \"**/*.ts\""
   },
   "dependencies": {
     "bcryptjs": "^2.4.3",
@@ -30,6 +31,7 @@
     "@types/totp-generator": "^0.0.5",
     "dotenv": "^16.0.3",
     "nodemon": "^2.0.20",
+    "prettier": "^2.8.7",
     "ts-node": "^10.9.1"
   }
 }
