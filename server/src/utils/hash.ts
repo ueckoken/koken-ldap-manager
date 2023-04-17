@@ -145,49 +145,69 @@ function core_md4(x: $TSFixMe, len: $TSFixMe) {
   return Array(a, b, c, d);
 }
 
-// @ts-expect-error TS(2304): Cannot find name '$TSFixMe'.
 function md4_cmn(
+  // @ts-expect-error TS(2304): Cannot find name '$TSFixMe'.
   q: $TSFixMe,
+  // @ts-expect-error TS(2304): Cannot find name '$TSFixMe'.
   a: $TSFixMe,
+  // @ts-expect-error TS(2304): Cannot find name '$TSFixMe'.
   b: $TSFixMe,
+  // @ts-expect-error TS(2304): Cannot find name '$TSFixMe'.
   x: $TSFixMe,
+  // @ts-expect-error TS(2304): Cannot find name '$TSFixMe'.
   s: $TSFixMe,
+  // @ts-expect-error TS(2304): Cannot find name '$TSFixMe'.
   t: $TSFixMe
 ) {
   return safe_add(rol(safe_add(safe_add(a, q), safe_add(x, t)), s), b);
 }
 
-// @ts-expect-error TS(2304): Cannot find name '$TSFixMe'.
 function md4_ff(
+  // @ts-expect-error TS(2304): Cannot find name '$TSFixMe'.
   a: $TSFixMe,
+  // @ts-expect-error TS(2304): Cannot find name '$TSFixMe'.
   b: $TSFixMe,
+  // @ts-expect-error TS(2304): Cannot find name '$TSFixMe'.
   c: $TSFixMe,
+  // @ts-expect-error TS(2304): Cannot find name '$TSFixMe'.
   d: $TSFixMe,
+  // @ts-expect-error TS(2304): Cannot find name '$TSFixMe'.
   x: $TSFixMe,
+  // @ts-expect-error TS(2304): Cannot find name '$TSFixMe'.
   s: $TSFixMe
 ) {
   return md4_cmn((b & c) | (~b & d), a, 0, x, s, 0);
 }
 
-// @ts-expect-error TS(2304): Cannot find name '$TSFixMe'.
 function md4_gg(
+  // @ts-expect-error TS(2304): Cannot find name '$TSFixMe'.
   a: $TSFixMe,
+  // @ts-expect-error TS(2304): Cannot find name '$TSFixMe'.
   b: $TSFixMe,
+  // @ts-expect-error TS(2304): Cannot find name '$TSFixMe'.
   c: $TSFixMe,
+  // @ts-expect-error TS(2304): Cannot find name '$TSFixMe'.
   d: $TSFixMe,
+  // @ts-expect-error TS(2304): Cannot find name '$TSFixMe'.
   x: $TSFixMe,
+  // @ts-expect-error TS(2304): Cannot find name '$TSFixMe'.
   s: $TSFixMe
 ) {
   return md4_cmn((b & c) | (b & d) | (c & d), a, 0, x, s, 1518500249);
 }
 
-// @ts-expect-error TS(2304): Cannot find name '$TSFixMe'.
 function md4_hh(
+  // @ts-expect-error TS(2304): Cannot find name '$TSFixMe'.
   a: $TSFixMe,
+  // @ts-expect-error TS(2304): Cannot find name '$TSFixMe'.
   b: $TSFixMe,
+  // @ts-expect-error TS(2304): Cannot find name '$TSFixMe'.
   c: $TSFixMe,
+  // @ts-expect-error TS(2304): Cannot find name '$TSFixMe'.
   d: $TSFixMe,
+  // @ts-expect-error TS(2304): Cannot find name '$TSFixMe'.
   x: $TSFixMe,
+  // @ts-expect-error TS(2304): Cannot find name '$TSFixMe'.
   s: $TSFixMe
 ) {
   return md4_cmn(b ^ c ^ d, a, 0, x, s, 1859775393);
@@ -243,11 +263,14 @@ function binl2str(bin: $TSFixMe) {
 
 //des
 //this takes the key, the message, and whether to encrypt or decrypt
-// @ts-expect-error TS(2304): Cannot find name '$TSFixMe'.
 function des(
+  // @ts-expect-error TS(2304): Cannot find name '$TSFixMe'.
   key: $TSFixMe,
+  // @ts-expect-error TS(2304): Cannot find name '$TSFixMe'.
   message: $TSFixMe,
+  // @ts-expect-error TS(2304): Cannot find name '$TSFixMe'.
   encrypt: $TSFixMe,
+  // @ts-expect-error TS(2304): Cannot find name '$TSFixMe'.
   mode: $TSFixMe,
   iv = undefined,
   padding = undefined
@@ -832,17 +855,23 @@ function des(
 
   if (mode == 1) {
     //CBC mode
-    // @ts-expect-error TS(2532): Object is possibly 'undefined'.
     cbcleft =
+      // @ts-expect-error TS(2532): Object is possibly 'undefined'.
       (iv.charCodeAt(m++) << 24) |
+      // @ts-expect-error TS(2532): Object is possibly 'undefined'.
       (iv.charCodeAt(m++) << 16) |
+      // @ts-expect-error TS(2532): Object is possibly 'undefined'.
       (iv.charCodeAt(m++) << 8) |
+      // @ts-expect-error TS(2532): Object is possibly 'undefined'.
       iv.charCodeAt(m++);
-    // @ts-expect-error TS(2532): Object is possibly 'undefined'.
     cbcright =
+      // @ts-expect-error TS(2532): Object is possibly 'undefined'.
       (iv.charCodeAt(m++) << 24) |
+      // @ts-expect-error TS(2532): Object is possibly 'undefined'.
       (iv.charCodeAt(m++) << 16) |
+      // @ts-expect-error TS(2532): Object is possibly 'undefined'.
       (iv.charCodeAt(m++) << 8) |
+      // @ts-expect-error TS(2532): Object is possibly 'undefined'.
       iv.charCodeAt(m++);
     m = 0;
   }
