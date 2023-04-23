@@ -2,7 +2,7 @@ import { generateNTLMHash } from "../utils/hash";
 import { IClientConfig, Client } from "ldap-ts-client";
 import { LdapUser } from "../types/LdapUser";
 import { getUserGroup } from "./GroupModel";
-const ssha = require('ssha');
+const ssha = require("ssha");
 
 const SID_PREFIX = process.env["SID_PREFIX"];
 const adminPassword = process.env["ADMIN_PASSWORD"];
@@ -10,27 +10,27 @@ const adminPassword = process.env["ADMIN_PASSWORD"];
 const config: IClientConfig = {
   ldapServerUrl: "ldap://ldap.ueckoken.club",
   user: "cn=admin,dc=ldap,dc=ueckoken,dc=club",
-  pass: adminPassword
+  pass: adminPassword,
 };
 
 export async function getCurrentUserId(): Promise<number> {
   const client = new Client(config);
   const curid = await client.queryAttributes({
     base: "cn=curid,ou=idpoolconf,dc=ldap,dc=ueckoken,dc=club",
-    attributes: ["uidNumber"]
+    attributes: ["uidNumber"],
   });
   await client.unbind();
-  return Number(curid[0].uidNumber)
+  return Number(curid[0].uidNumber);
 }
 
 export async function getCurrentGroupId(): Promise<number> {
   const client = new Client(config);
   const curid = await client.queryAttributes({
     base: "cn=curid,ou=idpoolconf,dc=ldap,dc=ueckoken,dc=club",
-    attributes: ["gidNumber"]
+    attributes: ["gidNumber"],
   });
   await client.unbind();
-  return Number(curid[0].gidNumber)
+  return Number(curid[0].gidNumber);
 }
 
 export async function updateCurrentUserId(uid: number): Promise<void> {
@@ -41,10 +41,10 @@ export async function updateCurrentUserId(uid: number): Promise<void> {
       {
         operation: "replace",
         modification: {
-          uidNumber: uid
-        }
-      }
-    ]
+          uidNumber: uid,
+        },
+      },
+    ],
   });
   await client.unbind();
 }
@@ -63,11 +63,11 @@ export async function getAllusers(): Promise<LdapUser[]> {
       "displayName",
       "mail",
       "telephoneNumber",
-      "employeeNumber"
+      "employeeNumber",
     ],
     options: {
       filter: "(objectClass=posixAccount)",
-      scope: "sub"
+      scope: "sub",
     },
   });
   await client.unbind();
@@ -88,10 +88,10 @@ export async function getAllusers(): Promise<LdapUser[]> {
       username: data.uid,
       email: data.mail,
       telephoneNumber: data.telephoneNumber,
-      studentId: data.employeeNumber
-    } as LdapUser)
+      studentId: data.employeeNumber,
+    } as LdapUser);
   }
-  return users
+  return users;
 }
 
 export async function getUser(uid: string): Promise<LdapUser> {
@@ -108,11 +108,11 @@ export async function getUser(uid: string): Promise<LdapUser> {
       "displayName",
       "mail",
       "telephoneNumber",
-      "employeeNumber"
+      "employeeNumber",
     ],
     options: {
       filter: "(uid=" + uid + ")",
-      scope: "sub"
+      scope: "sub",
     },
   });
   await client.unbind();
@@ -131,9 +131,9 @@ export async function getUser(uid: string): Promise<LdapUser> {
     username: data.uid,
     email: data.mail,
     telephoneNumber: data.telephoneNumber,
-    studentId: data.employeeNumber
+    studentId: data.employeeNumber,
   } as LdapUser;
-  return user
+  return user;
 }
 
 export async function createNewUser(
@@ -149,8 +149,8 @@ export async function createNewUser(
   const client = new Client(config);
   client.bind({
     user: "cn=admin,dc=ldap,dc=ueckoken,dc=club",
-    pass: adminPassword
-  })
+    pass: adminPassword,
+  });
   /* 最新のUIDをPoolから取ってくる */
   const uidNumber: number = await getCurrentUserId();
 
@@ -179,7 +179,7 @@ export async function createNewUser(
           "inetOrgPerson",
           "sambaSamAccount",
           "sambaIdmapEntry",
-          "apple-user"
+          "apple-user",
         ],
         /* CN(Full Name) */
         cn: `${firstname} ${lastname}`,
@@ -208,36 +208,41 @@ export async function createNewUser(
         /* ユーザパスワード (SHA512でハッシュ済み) */
         userpassword: RFCFormatPasswordHash,
         /* パスワードの最終更新日 */
-        pwdlastset: "-1", /* -1: 更新していない */
+        pwdlastset: "-1" /* -1: 更新していない */,
         /* Sambaでのアカウント種別 */
-        sambaacctflags: "[U          ]", /* U:User, W:Workstation... */
+        sambaacctflags: "[U          ]" /* U:User, W:Workstation... */,
         /* Sambaの有効期限 */
-        sambakickofftime: "0", /* 0: 無効にしない */
+        sambakickofftime: "0" /* 0: 無効にしない */,
         /* SambaLanManagerPassword: lmHashed */
         sambalmpassword: lmHashedPassword,
         /* Samba NTPassword: md4 hashed(NTLM) */
         sambantpassword: ntHashedPassword,
         /* Sambaのパスワード変更履歴 */
-        sambapasswordhistory: "0000000000000000000000000000000000000000000000000000000000000000",
+        sambapasswordhistory:
+          "0000000000000000000000000000000000000000000000000000000000000000",
         /* Samba Passwordの最終更新日 */
         sambapwdlastset: String(Date.now()),
         /* ユーザーのSambaId : 先頭部分は固定で、最後がユーザー固有(1000+uidNumber%1000000*2)  */
-        sambasid: `${SID_PREFIX}-${1000 + (uidNumber % 1000000 * 2)}`,
+        sambasid: `${SID_PREFIX}-${1000 + (uidNumber % 1000000) * 2}`,
         /* パスワードが期限切れになってから何日で無効にするか */
-        shadowexpire: "-1", /* -1: 無効にしない */
+        shadowexpire: "-1" /* -1: 無効にしない */,
         /* 予約 (defaultで0) */
         shadowflag: "0",
         /* パスワードの有効期限 */
-        shadowinactive: "0", /* 0: 無効にしない */
+        shadowinactive: "0" /* 0: 無効にしない */,
         /* パスワードの最終更新日 (1970/1/1からの日数) */
-        shadowlastchange: String(Math.floor((new Date().getTime() - new Date("1970/01/01").getTime()) / 86400000)), /* 0: 初回ログイン時に変更を求める */
+        shadowlastchange: String(
+          Math.floor(
+            (new Date().getTime() - new Date("1970/01/01").getTime()) / 86400000
+          )
+        ) /* 0: 初回ログイン時に変更を求める */,
         /* パスワード変更要求までの日数 */
-        shadowmax: "99999", /* 99999: 無期限 */
+        shadowmax: "99999" /* 99999: 無期限 */,
         /* パスワード変更不能日数 (一度パスワードを変更した後) */
-        shadowmin: "0", /* 0: 特に制限しない */
+        shadowmin: "0" /* 0: 特に制限しない */,
         /* パスワード期限満了時に警告を何日前に出すか */
-        shadowwarning: "7"
-      }
+        shadowwarning: "7",
+      },
     });
   } catch (error) {
     await updateCurrentUserId(uidNumber);
@@ -258,7 +263,7 @@ export async function createNewUser(
     email: email,
     telephoneNumber: phonenumber,
     studentId: studentid,
-    groups: []
+    groups: [],
   } as LdapUser;
 }
 
@@ -269,8 +274,8 @@ export async function updateUserPassword(
   const client = new Client(config);
   await client.bind({
     user: "cn=admin,dc=ldap,dc=ueckoken,dc=club",
-    pass: adminPassword
-  })
+    pass: adminPassword,
+  });
 
   const RFCFormatPasswordHash = ssha.create(newPassword);
   const [lmHashedPassword, ntHashedPassword] = generateNTLMHash(newPassword);
@@ -286,10 +291,15 @@ export async function updateUserPassword(
             sambalmpassword: lmHashedPassword,
             sambantpassword: ntHashedPassword,
             sambapwdlastset: String(Date.now()),
-            shadowlastchange: String(Math.floor((new Date().getTime() - new Date("1970/01/01").getTime()) / 86400000))
-          }
-        }
-      ]
+            shadowlastchange: String(
+              Math.floor(
+                (new Date().getTime() - new Date("1970/01/01").getTime()) /
+                  86400000
+              )
+            ),
+          },
+        },
+      ],
     });
   } catch (error) {
     if (error instanceof Error) {
@@ -311,8 +321,8 @@ export async function updateUser(
   const client = new Client(config);
   await client.bind({
     user: "cn=admin,dc=ldap,dc=ueckoken,dc=club",
-    pass: adminPassword
-  })
+    pass: adminPassword,
+  });
 
   try {
     await client.modifyAttribute({
@@ -327,10 +337,10 @@ export async function updateUser(
             cn: `${lastname} ${firstname}`,
             displayname: discordId,
             telephoneNumber: telephoneNumber,
-            employeeNumber: studentId
-          }
-        }
-      ]
+            employeeNumber: studentId,
+          },
+        },
+      ],
     });
   } catch (e) {
     if (e instanceof Error) {

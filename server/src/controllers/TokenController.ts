@@ -2,28 +2,26 @@ import {
   JsonController,
   Get,
   QueryParam,
-  Authorized
-} from 'routing-controllers';
+  Authorized,
+} from "routing-controllers";
 
-import { generateToken, verifyToken } from '../utils/token';
+import { generateToken, verifyToken } from "../utils/token";
 
-@JsonController('/token')
+@JsonController("/token")
 export class TokenController {
-  @Authorized(["manager","service"])
-  @Get('/issue')
+  @Authorized(["manager", "service"])
+  @Get("/issue")
   async totp(): Promise<any> {
-    const token = generateToken()
+    const token = generateToken();
     return {
-      token: token
+      token: token,
     };
   }
 
-  @Get('/verify')
-  async verify(
-    @QueryParam("token") token: string
-  ): Promise<any> {
+  @Get("/verify")
+  async verify(@QueryParam("token") token: string): Promise<any> {
     return {
-      valid: verifyToken(token)
+      valid: verifyToken(token),
     };
   }
 }

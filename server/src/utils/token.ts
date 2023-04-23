@@ -1,5 +1,5 @@
-import totp from "totp-generator"
-import bcrypt from "bcryptjs"
+import totp from "totp-generator";
+import bcrypt from "bcryptjs";
 
 export function generateTOTPToken(): string {
   return totp(String(process.env["TOTP_TOKEN"]), {

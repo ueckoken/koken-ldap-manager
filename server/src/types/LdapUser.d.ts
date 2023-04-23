@@ -1,4 +1,4 @@
-import { LdapGroup } from './LdapGroup.d';
+import { LdapGroup } from "./LdapGroup.d";
 export interface LdapUser {
   fullName: string;
   firstName: string;
@@ -12,4 +12,3 @@ export interface LdapUser {
   telephoneNumber: string;
   groups: string[];
 }
-
