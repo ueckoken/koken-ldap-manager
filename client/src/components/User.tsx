@@ -3,7 +3,11 @@ import router from "next/router";
 import { FC, useEffect, useState } from "react";
 import { Card, Form, InputGroup, Button } from "react-bootstrap";
 
-const User: FC<{ jwt: string | null, isAdmin: boolean, targetUser: string | null }> = ({ jwt, isAdmin, targetUser }) => {
+const User: FC<{
+  jwt: string | null;
+  isAdmin: boolean;
+  targetUser: string | null;
+}> = ({ jwt, isAdmin, targetUser }) => {
   const [firstName, setfirstName] = useState<string>("");
   const [lastName, setlastName] = useState<string>("");
   const [uid, setUid] = useState<string>("");
@@ -21,26 +25,34 @@ const User: FC<{ jwt: string | null, isAdmin: boolean, targetUser: string | null
   useEffect(() => {
     if (!jwt) return;
     (async () => {
-      const res0: any = await axios(`${process.env["NEXT_PUBLIC_API_BASEURL"]}/group/list`, {
-        method: "GET",
-        headers: {
-          Authorization: `Bearer ${jwt}`,
-        }
-      });
-      let data0 = res0.data;
-      data0 = data0.filter((group: string) => group !== "Domain Users");
-      setDefinedGroups(data0);
-      const res: any = await axios(
-        isAdmin ? `${process.env["NEXT_PUBLIC_API_BASEURL"]}/user/profile/${targetUser}` : `${process.env["NEXT_PUBLIC_API_BASEURL"]}/user/profile`
-        , {
+      const res0: any = await axios(
+        `${process.env["NEXT_PUBLIC_API_BASEURL"]}/group/list`,
+        {
           method: "GET",
           headers: {
             Authorization: `Bearer ${jwt}`,
           },
-        });
+        }
+      );
+      let data0 = res0.data;
+      data0 = data0.filter((group: string) => group !== "Domain Users");
+      setDefinedGroups(data0);
+      const res: any = await axios(
+        isAdmin
+          ? `${process.env["NEXT_PUBLIC_API_BASEURL"]}/user/profile/${targetUser}`
+          : `${process.env["NEXT_PUBLIC_API_BASEURL"]}/user/profile`,
+        {
+          method: "GET",
+          headers: {
+            Authorization: `Bearer ${jwt}`,
+          },
+        }
+      );
       const data = res.data;
       // remove Domain Users
-      data.groups = data.groups.filter((group: string) => group !== "Domain Users");
+      data.groups = data.groups.filter(
+        (group: string) => group !== "Domain Users"
+      );
       setUsername(data.username);
       setfirstName(data.firstName);
       setlastName(data.lastName);
@@ -57,8 +69,10 @@ const User: FC<{ jwt: string | null, isAdmin: boolean, targetUser: string | null
   const updateUserInfo = async () => {
     if (!jwt) return;
     const res: any = await axios(
-      isAdmin ? `${process.env["NEXT_PUBLIC_API_BASEURL"]}/user/profile/${targetUser}` : `${process.env["NEXT_PUBLIC_API_BASEURL"]}/user/profile`
-      , {
+      isAdmin
+        ? `${process.env["NEXT_PUBLIC_API_BASEURL"]}/user/profile/${targetUser}`
+        : `${process.env["NEXT_PUBLIC_API_BASEURL"]}/user/profile`,
+      {
         method: "PUT",
         headers: {
           Authorization: `Bearer ${jwt}`,
@@ -70,14 +84,13 @@ const User: FC<{ jwt: string | null, isAdmin: boolean, targetUser: string | null
           email: email,
           groups: groups,
           telephoneNumber: phonenumber,
-          studentId: studentid
+          studentId: studentid,
         },
-      });
+      }
+    );
     alert("ユーザー情報を変更しました");
-    if (isAdmin)
-      router.push("/admin/" + targetUser);
-    else
-      router.push("/user");
+    if (isAdmin) router.push("/admin/" + targetUser);
+    else router.push("/user");
     if (password != "") {
       if (password != confirmPassword) {
         alert("パスワードが一致しません");
@@ -92,16 +105,19 @@ const User: FC<{ jwt: string | null, isAdmin: boolean, targetUser: string | null
         return;
       }
       const res: any = await axios(
-        isAdmin ? `${process.env["NEXT_PUBLIC_API_BASEURL"]}/user/password/${targetUser}` : `${process.env["NEXT_PUBLIC_API_BASEURL"]}/user/password`
-        , {
+        isAdmin
+          ? `${process.env["NEXT_PUBLIC_API_BASEURL"]}/user/password/${targetUser}`
+          : `${process.env["NEXT_PUBLIC_API_BASEURL"]}/user/password`,
+        {
           method: "PUT",
           headers: {
             Authorization: `Bearer ${jwt}`,
           },
           data: {
-            password
+            password,
           },
-        });
+        }
+      );
       alert("パスワードを変更しました");
       setPassword("");
     }
@@ -111,7 +127,7 @@ const User: FC<{ jwt: string | null, isAdmin: boolean, targetUser: string | null
     <>
       <div className="pt-3">
         <h3 className="text-center">ユーザー情報</h3>
-        <Card style={{ width: '30rem' }} className="mx-auto border-white">
+        <Card style={{ width: "30rem" }} className="mx-auto border-white">
           <Card.Body>
             <Form>
               <Form.Group className="mb-3">
@@ -124,64 +140,100 @@ const User: FC<{ jwt: string | null, isAdmin: boolean, targetUser: string | null
               </Form.Group>
               <Form.Group className="mb-3">
                 <Form.Label>Groups</Form.Label>
-                {
-                  definedGroups.map((group: string) => {
-                    return (
-                      <Form.Check
-                        disabled={!isAdmin}
-                        key={group}
-                        type="checkbox"
-                        label={group}
-                        checked={groups.includes(group)}
-                        onChange={(e) => {
-                          if (e.target.checked) {
-                            setGroups([...groups, group]);
-                          } else {
-                            setGroups(groups.filter((g: string) => g !== group));
-                          }
+                {definedGroups.map((group: string) => {
+                  return (
+                    <Form.Check
+                      disabled={!isAdmin}
+                      key={group}
+                      type="checkbox"
+                      label={group}
+                      checked={groups.includes(group)}
+                      onChange={(e) => {
+                        if (e.target.checked) {
+                          setGroups([...groups, group]);
+                        } else {
+                          setGroups(groups.filter((g: string) => g !== group));
                         }
-                        }
-                      />
-                    )
-                  })
-                }
+                      }}
+                    />
+                  );
+                })}
               </Form.Group>
               <Form.Group className="mb-3">
                 <Form.Label>ユーザー名(変更不可)</Form.Label>
-                <Form.Control type="text" onChange={(e) => setUsername(e.target.value)} value={username} disabled />
+                <Form.Control
+                  type="text"
+                  onChange={(e) => setUsername(e.target.value)}
+                  value={username}
+                  disabled
+                />
               </Form.Group>
               <Form.Group className="mb-3">
                 <Form.Label>名前</Form.Label>
                 <InputGroup>
-                  <Form.Control type="text" value={firstName} onChange={(e) => setfirstName(e.target.value)} />
-                  <Form.Control type="text" value={lastName} onChange={(e) => setlastName(e.target.value)} />
+                  <Form.Control
+                    type="text"
+                    value={firstName}
+                    onChange={(e) => setfirstName(e.target.value)}
+                  />
+                  <Form.Control
+                    type="text"
+                    value={lastName}
+                    onChange={(e) => setlastName(e.target.value)}
+                  />
                 </InputGroup>
               </Form.Group>
               <Form.Group className="mb-3">
                 <Form.Label>Discord ID</Form.Label>
-                <Form.Control type="text" value={discordId} onChange={(e) => setDiscordId(e.target.value)} />
+                <Form.Control
+                  type="text"
+                  value={discordId}
+                  onChange={(e) => setDiscordId(e.target.value)}
+                />
               </Form.Group>
               <Form.Group className="mb-3">
                 <Form.Label>Eメール</Form.Label>
-                <Form.Control type="email" value={email} onChange={(e) => setEmail(e.target.value)} />
+                <Form.Control
+                  type="email"
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
+                />
               </Form.Group>
               <Form.Group className="mb-3">
                 <Form.Label>電話番号(ハイフンなし)</Form.Label>
-                <Form.Control type="text" value={phonenumber} onChange={(e) => setPhonenumber(e.target.value)} />
+                <Form.Control
+                  type="text"
+                  value={phonenumber}
+                  onChange={(e) => setPhonenumber(e.target.value)}
+                />
               </Form.Group>
               <Form.Group className="mb-3">
                 <Form.Label>学籍番号</Form.Label>
-                <Form.Control type="text" value={studentid} onChange={(e) => setStudentid(e.target.value)} />
+                <Form.Control
+                  type="text"
+                  value={studentid}
+                  onChange={(e) => setStudentid(e.target.value)}
+                />
               </Form.Group>
               <Form.Group className="mb-3">
                 <Form.Label>パスワード(6文字以上90文字以下)</Form.Label>
-                <Form.Control type="password" onChange={(e) => setPassword(e.target.value)} />
+                <Form.Control
+                  type="password"
+                  onChange={(e) => setPassword(e.target.value)}
+                />
               </Form.Group>
               <Form.Group className="mb-3">
                 <Form.Label>パスワード(確認用)</Form.Label>
-                <Form.Control type="password" onChange={(e) => setConfirmPassword(e.target.value)} />
+                <Form.Control
+                  type="password"
+                  onChange={(e) => setConfirmPassword(e.target.value)}
+                />
               </Form.Group>
-              <Button variant="primary" className="w-100" onClick={updateUserInfo}>
+              <Button
+                variant="primary"
+                className="w-100"
+                onClick={updateUserInfo}
+              >
                 更新
               </Button>
             </Form>
@@ -189,7 +241,7 @@ const User: FC<{ jwt: string | null, isAdmin: boolean, targetUser: string | null
         </Card>
       </div>
     </>
-  )
-}
+  );
+};
 
 export default User;

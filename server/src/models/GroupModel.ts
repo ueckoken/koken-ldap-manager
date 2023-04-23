@@ -1,4 +1,4 @@
-import { LdapGroup } from './../types/LdapGroup.d';
+import { LdapGroup } from "./../types/LdapGroup.d";
 
 import { IClientConfig, Client } from "ldap-ts-client";
 
@@ -8,36 +8,38 @@ const adminPassword = process.env["ADMIN_PASSWORD"];
 const config: IClientConfig = {
   ldapServerUrl: "ldap://ldap.ueckoken.club",
   user: "cn=admin,dc=ldap,dc=ueckoken,dc=club",
-  pass: adminPassword
+  pass: adminPassword,
 };
 
 export async function getAllgroups(): Promise<LdapGroup[]> {
   const client = new Client(config);
   await client.bind({
     user: "cn=admin,dc=ldap,dc=ueckoken,dc=club",
-    pass: adminPassword
-  })
+    pass: adminPassword,
+  });
   const results = await client.queryAttributes({
     base: "ou=group,dc=ldap,dc=ueckoken,dc=club",
     attributes: ["*"],
     options: {
       scope: "sub",
-      filter: "(objectClass=posixGroup)"
-    }
+      filter: "(objectClass=posixGroup)",
+    },
   });
   let groups: LdapGroup[] = [];
   for (let data of results) {
     groups.push({
       name: data.cn,
       gid: Number(data.gidNumber),
-      members: data.memberUid
-    } as LdapGroup)
+      members: data.memberUid,
+    } as LdapGroup);
   }
   await client.unbind();
-  return groups
+  return groups;
 }
 
-export async function getUserGroup(uid: string): Promise<LdapGroup[] | undefined> {
+export async function getUserGroup(
+  uid: string
+): Promise<LdapGroup[] | undefined> {
   const client = new Client(config);
   try {
     const results = await client.queryAttributes({
@@ -45,8 +47,8 @@ export async function getUserGroup(uid: string): Promise<LdapGroup[] | undefined
       attributes: ["*"],
       options: {
         scope: "sub",
-        filter: "(memberUid=" + uid + ")"
-      }
+        filter: "(memberUid=" + uid + ")",
+      },
     });
     let groups: LdapGroup[] = [];
     let data: any;
@@ -54,14 +56,13 @@ export async function getUserGroup(uid: string): Promise<LdapGroup[] | undefined
       groups.push({
         name: data.cn,
         gid: Number(data.gidNumber),
-        members: data.memberUid
-      } as LdapGroup)
+        members: data.memberUid,
+      } as LdapGroup);
     }
     client.unbind();
-    return groups
+    return groups;
   } catch (error) {
-    if (error instanceof Error)
-      throw new Error(error.message)
+    if (error instanceof Error) throw new Error(error.message);
   }
 }
 
@@ -70,16 +71,17 @@ export async function addUserToGroup(uid: string, groupName: string) {
   try {
     client.modifyAttribute({
       dn: "cn=" + groupName + ",ou=group,dc=ldap,dc=ueckoken,dc=club",
-      changes: [{
-        operation: "add",
-        modification: {
-          memberUid: uid
-        }
-      }]
-    })
+      changes: [
+        {
+          operation: "add",
+          modification: {
+            memberUid: uid,
+          },
+        },
+      ],
+    });
   } catch (error) {
-    if (error instanceof Error)
-      throw new Error(error.message)
+    if (error instanceof Error) throw new Error(error.message);
   }
   client.unbind();
 }
@@ -89,16 +91,17 @@ export async function removeUserFromGroup(uid: string, groupName: string) {
   try {
     client.modifyAttribute({
       dn: "cn=" + groupName + ",ou=group,dc=ldap,dc=ueckoken,dc=club",
-      changes: [{
-        operation: "delete",
-        modification: {
-          memberUid: uid
-        }
-      }]
-    })
+      changes: [
+        {
+          operation: "delete",
+          modification: {
+            memberUid: uid,
+          },
+        },
+      ],
+    });
   } catch (error) {
-    if (error instanceof Error)
-      throw new Error(error.message)
+    if (error instanceof Error) throw new Error(error.message);
   }
   client.unbind();
 }
