@@ -7,6 +7,7 @@ const UserList: FC<{ jwt: string | null }> = ({ jwt }) => {
   const [users, setUsers] = useState<any[]>([]);
   useEffect(() => {
     if (!jwt) return;
+    const abortController = new AbortController();
     (async () => {
       const res: any = await axios(
         `${process.env["NEXT_PUBLIC_API_BASEURL"]}/user/list`,
@@ -15,6 +16,7 @@ const UserList: FC<{ jwt: string | null }> = ({ jwt }) => {
           headers: {
             Authorization: `Bearer ${jwt}`,
           },
+          signal: abortController.signal,
         }
       );
       const users = res.data;
@@ -27,6 +29,9 @@ const UserList: FC<{ jwt: string | null }> = ({ jwt }) => {
       });
       setUsers(users);
     })();
+    return () => {
+      abortController.abort();
+    };
   }, [jwt]);
 
   return (
