@@ -24,6 +24,7 @@ const User: FC<{
 
   useEffect(() => {
     if (!jwt) return;
+    const abortController = new AbortController();
     (async () => {
       const res0: any = await axios(
         `${process.env["NEXT_PUBLIC_API_BASEURL"]}/group/list`,
@@ -32,6 +33,7 @@ const User: FC<{
           headers: {
             Authorization: `Bearer ${jwt}`,
           },
+          signal: abortController.signal,
         }
       );
       let data0 = res0.data;
@@ -46,6 +48,7 @@ const User: FC<{
           headers: {
             Authorization: `Bearer ${jwt}`,
           },
+          signal: abortController.signal,
         }
       );
       const data = res.data;
@@ -64,6 +67,9 @@ const User: FC<{
       setPhonenumber(data.telephoneNumber);
       setStudentid(data.studentId);
     })();
+    return () => {
+      abortController.abort();
+    };
   }, [jwt]);
 
   const updateUserInfo = async () => {

@@ -3,6 +3,7 @@ import { FC, useEffect, useState } from "react";
 
 const Token: FC<{ jwt: string | null }> = ({ jwt }) => {
   const [token, setToken] = useState<string | undefined>();
+  const abortController = new AbortController();
   useEffect(() => {
     if (!jwt) return;
     (async () => {
@@ -13,11 +14,15 @@ const Token: FC<{ jwt: string | null }> = ({ jwt }) => {
           headers: {
             Authorization: `Bearer ${jwt}`,
           },
+          signal: abortController.signal,
         }
       );
       const data = res.data;
       setToken(data.token);
     })();
+    return () => {
+      abortController.abort();
+    };
   }, [jwt]);
 
   return (

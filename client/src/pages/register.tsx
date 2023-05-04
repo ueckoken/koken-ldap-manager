@@ -26,12 +26,14 @@ export default function RegisterPage() {
 
   useEffect(() => {
     if (!token) return;
+    const abortController = new AbortController();
     (async () => {
       // veridate token
       const res = await axios(
         `${process.env["NEXT_PUBLIC_API_BASEURL"]}/token/verify?token=${token}`,
         {
           method: "GET",
+          signal: abortController.signal,
         }
       );
       console.log(res);
@@ -47,6 +49,9 @@ export default function RegisterPage() {
       if (studentidQuery) setstudentid(studentidQuery as string);
       if (phonenumberQuery) setphonenumber(phonenumberQuery as string);
     })();
+    return () => {
+      abortController.abort();
+    };
   }, [token]);
 
   const checkPassword = (password: string) => {
