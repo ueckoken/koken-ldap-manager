@@ -1,5 +1,5 @@
 import User from "@/components/User";
-import { FC, useEffect, useState } from "react";
+import { FC, FormEvent, useEffect, useState } from "react";
 import axios from "axios";
 import { Button, Card, Form } from "react-bootstrap";
 
@@ -14,7 +14,8 @@ const LoginPage: FC<{}> = () => {
     setJwt(token);
   }, []);
 
-  const onClickLogin = async () => {
+  const onSubmit = async (e: FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
     const res: any = await axios(
       `${process.env["NEXT_PUBLIC_API_BASEURL"]}/auth/login`,
       {
@@ -41,7 +42,7 @@ const LoginPage: FC<{}> = () => {
       <h5 className="text-center">ログイン</h5>
       <Card style={{ width: "20rem" }} className="mx-auto">
         <Card.Body>
-          <Form>
+          <Form onSubmit={onSubmit}>
             <Form.Group className="mb-3">
               <Form.Label>ユーザーID</Form.Label>
               <Form.Control
@@ -56,7 +57,7 @@ const LoginPage: FC<{}> = () => {
                 onChange={(e) => setPassowrd(e.target.value)}
               />
             </Form.Group>
-            <Button variant="primary" className="w-100" onClick={onClickLogin}>
+            <Button type="submit" variant="primary" className="w-100">
               ログイン
             </Button>
           </Form>
