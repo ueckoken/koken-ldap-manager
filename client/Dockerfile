@@ -1,10 +1,10 @@
-FROM node:20.0-bullseye as deps
+FROM node:20.1-bullseye as deps
 WORKDIR /app
 COPY package.json  yarn.lock /app/
 
 RUN yarn install --immutable
 
-FROM node:20.0-bullseye as builder
+FROM node:20.1-bullseye as builder
 WORKDIR /app
 COPY --from=deps /app/node_modules /app/node_modules
 COPY . /app
