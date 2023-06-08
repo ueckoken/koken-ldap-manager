@@ -367,10 +367,17 @@
   dependencies:
     "@types/node" "*"
 
-"@types/ldapjs@^2.2.3", "@types/ldapjs@^2.2.5":
+"@types/ldapjs@^2.2.3":
   version "2.2.5"
   resolved "https://registry.yarnpkg.com/@types/ldapjs/-/ldapjs-2.2.5.tgz#b6623bc5ad4fab85ef3cfa586db691d016a3598c"
   integrity sha512-Lv/nD6QDCmcT+V1vaTRnEKE8UgOilVv5pHcQuzkU1LcRe4mbHHuUo/KHi0LKrpdHhQY8FJzryF38fcVdeUIrzg==
+  dependencies:
+    "@types/node" "*"
+
+"@types/ldapjs@^3.0.0":
+  version "3.0.0"
+  resolved "https://registry.yarnpkg.com/@types/ldapjs/-/ldapjs-3.0.0.tgz#2639dc185f054cadecb32c83384283d64a06fed0"
+  integrity sha512-Q3QpM+2kqcFFcl7HCF/DC1w/Yg1dlUygft3bAFilrlsOzUTdE3BcN2ZSxa+YcbHAIbxgV7zX0gOTlsXH0mn08Q==
   dependencies:
     "@types/node" "*"
 
