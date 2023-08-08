@@ -380,9 +380,9 @@
     "@types/node" "*"
 
 "@types/ldapjs@^3.0.0":
-  version "3.0.0"
-  resolved "https://registry.yarnpkg.com/@types/ldapjs/-/ldapjs-3.0.0.tgz#2639dc185f054cadecb32c83384283d64a06fed0"
-  integrity sha512-Q3QpM+2kqcFFcl7HCF/DC1w/Yg1dlUygft3bAFilrlsOzUTdE3BcN2ZSxa+YcbHAIbxgV7zX0gOTlsXH0mn08Q==
+  version "3.0.1"
+  resolved "https://registry.yarnpkg.com/@types/ldapjs/-/ldapjs-3.0.1.tgz#882c8ff495c7c4593b2d4559ef20d6378afbb83d"
+  integrity sha512-MAeceBTozjzrZIDNKhxYaeDCLSrmUM2YUysPQiTofjp0d/XIAxqzeVoNgJOPj7tseyNcqsX6Rl3G0mROKQNxRA==
   dependencies:
     "@types/node" "*"
 
@@ -392,9 +392,9 @@
   integrity sha512-Y4XFY5VJAuw0FgAqPNd6NNoV44jbq9Bz2L7Rh/J6jLTiHBSBJa9fxqQIvkIld4GsoDOcCbvzOUAbLPsSKKg+uA==
 
 "@types/node@*":
-  version "20.0.0"
-  resolved "https://registry.yarnpkg.com/@types/node/-/node-20.0.0.tgz#081d9afd28421be956c1a47ced1c9a0034b467e2"
-  integrity sha512-cD2uPTDnQQCVpmRefonO98/PPijuOnnEy5oytWJFPY1N9aJCz2wJ5kSGWO+zJoed2cY2JxQh6yBuUq4vIn61hw==
+  version "20.4.9"
+  resolved "https://registry.yarnpkg.com/@types/node/-/node-20.4.9.tgz#c7164e0f8d3f12dfae336af0b1f7fdec8c6b204f"
+  integrity sha512-8e2HYcg7ohnTUbHk8focoklEQYvemQmu9M/f43DZVx43kHn0tE3BY/6gSDxS7k0SprtS0NHvj+L80cGLnoOUcQ==
 
 "@types/node@^18.11.18":
   version "18.17.3"
