@@ -57,6 +57,7 @@ const Header: FC<{}> = () => {
             {jwtData && jwt && (
               <NavDropdown title={jwtData.uid} align="end">
                 <NavDropdown.Item href="/user">ユーザー設定</NavDropdown.Item>
+                <NavDropdown.Item href="/update">更新届提出</NavDropdown.Item>
                 {jwtData.groups.includes("manager") && (
                   <NavDropdown.Item href="/admin">
                     ユーザー管理
