@@ -77,7 +77,7 @@ const User: FC<{
     return () => {
       abortController.abort();
     };
-  }, [jwt]);
+  }, [jwt, isAdmin, targetUser]);
 
   const updateUserInfo = async () => {
     if (!jwt) return;

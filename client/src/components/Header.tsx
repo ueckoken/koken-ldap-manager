@@ -1,6 +1,7 @@
 import { FC, useEffect, useState } from "react";
 import jwt_decode from "jwt-decode";
 import Link from "next/link";
+import Image from "next/image";
 
 const Header: FC<{}> = () => {
   const [jwt, setJwt] = useState<string | null>(null);
@@ -27,7 +28,7 @@ const Header: FC<{}> = () => {
       setJwt(null);
       window.location.href = "/";
     }
-  });
+  }, [jwt]); // JWT変更時にチェック
 
   const onClickLogout = () => {
     setJwt(null);
@@ -41,9 +42,11 @@ const Header: FC<{}> = () => {
         <div className="flex justify-between h-16">
           <div className="flex items-center">
             <Link href="/" className="flex items-center">
-              <img
+              <Image
                 alt="Logo"
                 src="/logo.svg"
+                width={32}
+                height={32}
                 className="h-8 w-8"
               />
               <span className="ml-2 text-xl font-semibold text-gray-900 dark:text-white">

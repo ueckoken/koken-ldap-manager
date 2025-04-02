@@ -8,7 +8,7 @@ const UserPage: FC<{}> = () => {
     const token = localStorage.getItem("token");
     if (!token) return;
     setJwt(token);
-  });
+  }, []); // 初回マウント時のみ実行
 
   return (
     <>

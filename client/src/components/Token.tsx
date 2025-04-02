@@ -6,10 +6,11 @@ const Token: FC<{ jwt: string | null }> = ({ jwt }) => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string>("");
   const [copied, setCopied] = useState(false);
-  const abortController = new AbortController();
 
   useEffect(() => {
     if (!jwt) return;
+    const abortController = new AbortController();
+
     (async () => {
       try {
         const res: any = await axios(
@@ -33,7 +34,7 @@ const Token: FC<{ jwt: string | null }> = ({ jwt }) => {
     return () => {
       abortController.abort();
     };
-  }, [jwt]);
+  }, [jwt]); // jwtが変更された時のみ実行
 
   const copyToClipboard = async (text: string) => {
     try {

@@ -59,7 +59,17 @@ export default function RegisterPage() {
     return () => {
       abortController.abort();
     };
-  }, [token]);
+  }, [
+    token,
+    router,
+    usernameQuery,
+    firstnameQuery,
+    lastnameQuery,
+    emailQuery,
+    discordIdQuery,
+    studentidQuery,
+    phonenumberQuery
+  ]);
 
   const checkPassword = (password: string) => {
     if (password.length < 6) {
