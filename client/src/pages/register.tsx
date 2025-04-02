@@ -1,7 +1,7 @@
 import { FC, useEffect, useState } from "react";
 import { useRouter } from "next/router";
 import axios from "axios";
-import { Button, Card, Form, InputGroup } from "react-bootstrap";
+import Head from "next/head";
 
 export default function RegisterPage() {
   const router = useRouter();
@@ -14,40 +14,47 @@ export default function RegisterPage() {
   const studentidQuery = router.query.studentid;
   const phonenumberQuery = router.query.phonenumber;
 
-  const [username, setusername] = useState<string>("");
-  const [password, setPassowrd] = useState<string>("");
+  const [username, setUsername] = useState<string>("");
+  const [password, setPassword] = useState<string>("");
   const [confirmPassword, setConfirmPassword] = useState<string>("");
   const [firstName, setFirstName] = useState<string>("");
   const [lastName, setLastName] = useState<string>("");
   const [email, setEmail] = useState<string>("");
   const [discordId, setDiscordId] = useState<string>("");
-  const [studentid, setstudentid] = useState<string>("");
-  const [phonenumber, setphonenumber] = useState<string>("");
+  const [studentid, setStudentId] = useState<string>("");
+  const [phonenumber, setPhoneNumber] = useState<string>("");
+  const [error, setError] = useState<string>("");
+  const [loading, setLoading] = useState(false);
 
   useEffect(() => {
     if (!token) return;
     const abortController = new AbortController();
     (async () => {
-      // veridate token
-      const res = await axios(
-        `${process.env["NEXT_PUBLIC_API_BASEURL"]}/token/verify?token=${token}`,
-        {
-          method: "GET",
-          signal: abortController.signal,
+      try {
+        const res = await axios(
+          `${process.env["NEXT_PUBLIC_API_BASEURL"]}/token/verify?token=${token}`,
+          {
+            method: "GET",
+            signal: abortController.signal,
+          }
+        );
+        
+        if (!res.data.valid) {
+          setError("無効なトークンです");
+          router.push("/");
+          return;
         }
-      );
-      console.log(res);
-      if (!res.data.valid) {
-        alert("Invalid token");
-        router.push("/");
+
+        if (usernameQuery) setUsername(usernameQuery as string);
+        if (firstnameQuery) setFirstName(firstnameQuery as string);
+        if (lastnameQuery) setLastName(lastnameQuery as string);
+        if (emailQuery) setEmail(emailQuery as string);
+        if (discordIdQuery) setDiscordId(discordIdQuery as string);
+        if (studentidQuery) setStudentId(studentidQuery as string);
+        if (phonenumberQuery) setPhoneNumber(phonenumberQuery as string);
+      } catch (err) {
+        setError("トークンの検証に失敗しました");
       }
-      if (usernameQuery) setusername(usernameQuery as string);
-      if (firstnameQuery) setFirstName(firstnameQuery as string);
-      if (lastnameQuery) setLastName(lastnameQuery as string);
-      if (emailQuery) setEmail(emailQuery as string);
-      if (discordIdQuery) setDiscordId(discordIdQuery as string);
-      if (studentidQuery) setstudentid(studentidQuery as string);
-      if (phonenumberQuery) setphonenumber(phonenumberQuery as string);
     })();
     return () => {
       abortController.abort();
@@ -56,18 +63,25 @@ export default function RegisterPage() {
 
   const checkPassword = (password: string) => {
     if (password.length < 6) {
-      alert("パスワードは6文字以上にしてください");
+      setError("パスワードは6文字以上にしてください");
       return false;
     }
-    if (password != confirmPassword) {
-      alert("パスワードが一致しません");
+    if (password.length > 90) {
+      setError("パスワードは90文字以下にしてください");
+      return false;
+    }
+    if (password !== confirmPassword) {
+      setError("パスワードが一致しません");
       return false;
     }
     return true;
   };
 
   const onClickRegister = async () => {
+    setError("");
     if (!checkPassword(password)) return;
+    setLoading(true);
+
     try {
       const res = await axios(
         `${process.env["NEXT_PUBLIC_API_BASEURL"]}/user/register/token`,
@@ -86,113 +100,197 @@ export default function RegisterPage() {
           },
         }
       );
-      const data = res.data;
-      if (res.data.httpCode && res.data.httpCode != 200) {
-        alert(res.data.message);
+
+      if (res.data.httpCode && res.data.httpCode !== 200) {
+        setError(res.data.message);
         return;
       }
+
       alert("登録が完了しました");
       router.push("/");
     } catch (error: any) {
-      console.log(error);
-      alert(error.response.data.message);
+      setError(error.response?.data?.message || "登録に失敗しました");
+    } finally {
+      setLoading(false);
     }
   };
 
   return (
     <>
-      <div className="pt-3">
-        <h3 className="text-center">アカウント登録</h3>
-        <Card style={{ width: "30rem" }} className="mx-auto border-white">
-          <Card.Body>
-            <Form>
-              <Form.Group className="mb-3">
-                <Form.Label>ユーザー名(変更不可)</Form.Label>
-                <Form.Control
-                  type="text"
-                  onChange={(e) => setusername(e.target.value)}
-                  placeholder="takumikentaro"
-                  value={username}
-                />
-                <small>既に使用されているユーザー名は使えません</small>
-              </Form.Group>
-              <Form.Group className="mb-3">
-                <Form.Label>名前</Form.Label>
-                <InputGroup>
-                  <Form.Control
-                    type="text"
-                    placeholder="工研"
-                    onChange={(e) => setFirstName(e.target.value)}
-                    value={firstName}
-                  />
-                  <Form.Control
-                    type="text"
-                    placeholder="太郎"
-                    onChange={(e) => setLastName(e.target.value)}
-                    value={lastName}
-                  />
-                </InputGroup>
-              </Form.Group>
-              <Form.Group className="mb-3">
-                <Form.Label>学籍番号</Form.Label>
-                <Form.Control
-                  type="text"
-                  placeholder="2110000"
-                  onChange={(e) => setstudentid(e.target.value)}
-                  value={studentid}
-                />
-              </Form.Group>
-              <Form.Group className="mb-3">
-                <Form.Label>電話番号(ハイフン無し)</Form.Label>
-                <Form.Control
-                  type="text"
-                  placeholder="07012345678"
-                  onChange={(e) => setphonenumber(e.target.value)}
-                  value={phonenumber}
-                />
-              </Form.Group>
-              <Form.Group className="mb-3">
-                <Form.Label>Discord ID</Form.Label>
-                <Form.Control
-                  type="text"
-                  placeholder="kokenuser#1962"
-                  onChange={(e) => setDiscordId(e.target.value)}
-                  value={discordId}
-                />
-              </Form.Group>
-              <Form.Group className="mb-3">
-                <Form.Label>Eメール</Form.Label>
-                <Form.Control
-                  type="email"
-                  placeholder="ueckoken@gmail.com"
-                  onChange={(e) => setEmail(e.target.value)}
-                  value={email}
-                />
-              </Form.Group>
-              <Form.Group className="mb-3">
-                <Form.Label>パスワード(6文字以上90文字以下)</Form.Label>
-                <Form.Control
-                  type="password"
-                  onChange={(e) => setPassowrd(e.target.value)}
-                />
-              </Form.Group>
-              <Form.Group className="mb-3">
-                <Form.Label>パスワード(確認用)</Form.Label>
-                <Form.Control
-                  type="password"
-                  onChange={(e) => setConfirmPassword(e.target.value)}
-                />
-              </Form.Group>
-              <Button
-                variant="primary"
-                className="w-100"
-                onClick={onClickRegister}
+      <Head>
+        <title>アカウント登録 - Koken LDAP Manager</title>
+      </Head>
+
+      <div className="max-w-2xl mx-auto px-4 py-8">
+        <h2 className="text-2xl font-bold text-center text-gray-900 dark:text-white mb-8">
+          アカウント登録
+        </h2>
+
+        {error && (
+          <div className="mb-6 p-4 bg-red-100 border border-red-400 text-red-700 rounded">
+            {error}
+          </div>
+        )}
+
+        <div className="bg-white dark:bg-gray-800 shadow rounded-lg p-6 space-y-6">
+          <div>
+            <label htmlFor="username" className="form-label">
+              ユーザー名（変更不可）
+            </label>
+            <input
+              id="username"
+              type="text"
+              className="input-field"
+              placeholder="takumikentaro"
+              value={username}
+              onChange={(e) => setUsername(e.target.value)}
+            />
+            <p className="mt-1 text-sm text-gray-500 dark:text-gray-400">
+              既に使用されているユーザー名は使えません
+            </p>
+          </div>
+
+          <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
+            <div>
+              <label htmlFor="firstName" className="form-label">
+                姓
+              </label>
+              <input
+                id="firstName"
+                type="text"
+                className="input-field"
+                placeholder="工研"
+                value={firstName}
+                onChange={(e) => setFirstName(e.target.value)}
+              />
+            </div>
+            <div>
+              <label htmlFor="lastName" className="form-label">
+                名
+              </label>
+              <input
+                id="lastName"
+                type="text"
+                className="input-field"
+                placeholder="太郎"
+                value={lastName}
+                onChange={(e) => setLastName(e.target.value)}
+              />
+            </div>
+          </div>
+
+          <div>
+            <label htmlFor="studentid" className="form-label">
+              学籍番号
+            </label>
+            <input
+              id="studentid"
+              type="text"
+              className="input-field"
+              placeholder="2110000"
+              value={studentid}
+              onChange={(e) => setStudentId(e.target.value)}
+            />
+          </div>
+
+          <div>
+            <label htmlFor="phonenumber" className="form-label">
+              電話番号（ハイフンなし）
+            </label>
+            <input
+              id="phonenumber"
+              type="text"
+              className="input-field"
+              placeholder="07012345678"
+              value={phonenumber}
+              onChange={(e) => setPhoneNumber(e.target.value)}
+            />
+          </div>
+
+          <div>
+            <label htmlFor="discordId" className="form-label">
+              Discord ID
+            </label>
+            <input
+              id="discordId"
+              type="text"
+              className="input-field"
+              placeholder="kokenuser#1962"
+              value={discordId}
+              onChange={(e) => setDiscordId(e.target.value)}
+            />
+          </div>
+
+          <div>
+            <label htmlFor="email" className="form-label">
+              メールアドレス
+            </label>
+            <input
+              id="email"
+              type="email"
+              className="input-field"
+              placeholder="ueckoken@gmail.com"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+            />
+          </div>
+
+          <div>
+            <label htmlFor="password" className="form-label">
+              パスワード（6文字以上90文字以下）
+            </label>
+            <input
+              id="password"
+              type="password"
+              className="input-field"
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+            />
+          </div>
+
+          <div>
+            <label htmlFor="confirmPassword" className="form-label">
+              パスワード（確認用）
+            </label>
+            <input
+              id="confirmPassword"
+              type="password"
+              className="input-field"
+              value={confirmPassword}
+              onChange={(e) => setConfirmPassword(e.target.value)}
+            />
+          </div>
+
+          <button
+            onClick={onClickRegister}
+            disabled={loading}
+            className="btn-primary w-full flex justify-center items-center"
+          >
+            {loading ? (
+              <svg
+                className="animate-spin -ml-1 mr-3 h-5 w-5 text-white"
+                xmlns="http://www.w3.org/2000/svg"
+                fill="none"
+                viewBox="0 0 24 24"
               >
-                登録
-              </Button>
-            </Form>
-          </Card.Body>
-        </Card>
+                <circle
+                  className="opacity-25"
+                  cx="12"
+                  cy="12"
+                  r="10"
+                  stroke="currentColor"
+                  strokeWidth="4"
+                ></circle>
+                <path
+                  className="opacity-75"
+                  fill="currentColor"
+                  d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
+                ></path>
+              </svg>
+            ) : null}
+            登録
+          </button>
+        </div>
       </div>
     </>
   );

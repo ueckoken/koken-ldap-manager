@@ -2,17 +2,15 @@ import Footer from "@/components/Footer";
 import Header from "@/components/Header";
 import "@/styles/globals.css";
 import type { AppProps } from "next/app";
-import "bootstrap/dist/css/bootstrap.min.css";
-import { Container } from "react-bootstrap";
 
 export default function App({ Component, pageProps }: AppProps) {
   return (
-    <>
+    <div className="min-h-screen flex flex-col bg-gray-50 dark:bg-gray-900">
       <Header />
-      <Container fluid>
+      <main className="flex-grow container mx-auto px-4 sm:px-6 lg:px-8 py-8">
         <Component {...pageProps} />
-      </Container>
+      </main>
       <Footer />
-    </>
+    </div>
   );
 }
