@@ -12,6 +12,9 @@ COPY . /app
 # Hardcode the API and site URLs for the client
 ENV NEXT_PUBLIC_API_BASEURL=https://apiklm.ueckoken.club
 ENV NEXT_PUBLIC_SITE_BASEURL=https://klm.ueckoken.club
+ENV NEXT_PUBLIC_DISCORD_CLIENT_ID=1228298207612764201
+ENV NEXT_PUBLIC_DISCORD_REDIRECT_URI=https://apiklm.ueckoken.club/discord-callback
+
 
 RUN yarn build
 
