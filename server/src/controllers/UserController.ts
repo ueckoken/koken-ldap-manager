@@ -32,49 +32,91 @@ export class UserController {
     @BodyParam("redirectUri", { required: true }) redirectUri: string
   ): Promise<any> {
     try {
+      // 環境変数のチェック
+      if (!process.env.DISCORD_CLIENT_ID || !process.env.DISCORD_CLIENT_SECRET) {
+        console.error("Discord OAuth環境変数が設定されていません");
+        throw new HttpError(500, "サーバー設定エラー: Discord OAuth設定が不足しています");
+      }
+
+      console.log("Discord連携開始: ", { user: user.uid, redirectUri });
+
       // Discord APIにアクセストークンをリクエスト
-      const tokenResponse = await axios.post(
-        "https://discord.com/api/oauth2/token",
-        new URLSearchParams({
-          client_id: process.env.DISCORD_CLIENT_ID || "",
-          client_secret: process.env.DISCORD_CLIENT_SECRET || "",
-          code,
-          grant_type: "authorization_code",
-          redirect_uri: redirectUri,
-        }),
-        {
-          headers: {
-            "Content-Type": "application/x-www-form-urlencoded",
-          },
-        }
-      );
+      let tokenResponse;
+      try {
+        tokenResponse = await axios.post(
+          "https://discord.com/api/oauth2/token",
+          new URLSearchParams({
+            client_id: process.env.DISCORD_CLIENT_ID,
+            client_secret: process.env.DISCORD_CLIENT_SECRET,
+            code,
+            grant_type: "authorization_code",
+            redirect_uri: redirectUri,
+          }),
+          {
+            headers: {
+              "Content-Type": "application/x-www-form-urlencoded",
+            },
+          }
+        );
+        console.log("Discord APIトークン取得成功");
+      } catch (tokenError: any) {
+        console.error("Discord APIトークン取得エラー:", tokenError.response?.data || tokenError.message);
+        throw new HttpError(500, "Discord認証に失敗しました: トークン取得エラー");
+      }
 
       const { access_token } = tokenResponse.data;
 
       // Discord APIからユーザー情報を取得
-      const userResponse = await axios.get("https://discord.com/api/users/@me", {
-        headers: {
-          Authorization: `Bearer ${access_token}`,
-        },
-      });
+      let userResponse;
+      try {
+        userResponse = await axios.get("https://discord.com/api/users/@me", {
+          headers: {
+            Authorization: `Bearer ${access_token}`,
+          },
+        });
+        console.log("Discordユーザー情報取得成功");
+      } catch (userError: any) {
+        console.error("Discordユーザー情報取得エラー:", userError.response?.data || userError.message);
+        throw new HttpError(500, "Discord認証に失敗しました: ユーザー情報取得エラー");
+      }
 
       const discordId = userResponse.data.id;
+      console.log("取得したDiscord ID:", discordId);
+
+      // LDAPから最新のユーザー情報を取得
+      let currentUserInfo;
+      try {
+        currentUserInfo = await getUser(user.uid);
+        console.log("現在のユーザー情報取得成功:", currentUserInfo.username);
+      } catch (getUserError: any) {
+        console.error("ユーザー情報取得エラー:", getUserError.message);
+        throw new HttpError(500, `ユーザー情報の取得に失敗しました: ${getUserError.message}`);
+      }
 
       // ユーザー情報を更新
-      await updateUser(
-        user.uid,
-        discordId,
-        user.email,
-        user.firstName,
-        user.lastName,
-        user.telephoneNumber || "",
-        user.studentId || ""
-      );
+      try {
+        await updateUser(
+          user.uid,
+          discordId,
+          currentUserInfo.email,
+          currentUserInfo.firstName,
+          currentUserInfo.lastName,
+          currentUserInfo.telephoneNumber || "",
+          currentUserInfo.studentId || ""
+        );
+        console.log("ユーザー情報更新成功");
+      } catch (updateError: any) {
+        console.error("ユーザー情報更新エラー:", updateError.message);
+        throw new HttpError(500, `ユーザー情報の更新に失敗しました: ${updateError.message}`);
+      }
 
-      return { success: true };
-    } catch (error) {
+      return { success: true, discordId };
+    } catch (error: any) {
       console.error("Discord連携エラー:", error);
-      throw new HttpError(500, "Discord連携に失敗しました");
+      if (error instanceof HttpError) {
+        throw error;
+      }
+      throw new HttpError(500, `Discord連携に失敗しました: ${error.message}`);
     }
   }
 

@@ -31,22 +31,46 @@ const DiscordCallback: FC = () => {
     // Discord認証コードをバックエンドに送信
     const connectDiscord = async () => {
       try {
-        await axios(`${process.env["NEXT_PUBLIC_API_BASEURL"]}/user/discord/connect`, {
-          method: "POST",
-          headers: {
-            Authorization: `Bearer ${jwt}`,
-          },
-          data: {
-            code,
-            redirectUri: `${window.location.origin}/discord-callback`,
-          },
-        });
-
-        // 成功したらユーザーページにリダイレクト
-        router.push("/user?discord_connected=true");
-      } catch (err) {
-        console.error("Discord連携に失敗しました", err);
-        setError("Discord連携に失敗しました。もう一度お試しください。");
+        console.log("Discord連携開始: コード取得済み");
+        
+        // 環境変数のチェック
+        if (!process.env["NEXT_PUBLIC_API_BASEURL"]) {
+          throw new Error("API URLが設定されていません");
+        }
+        
+        const redirectUri = `${window.location.origin}/discord-callback`;
+        console.log("リダイレクトURI:", redirectUri);
+        
+        try {
+          const response = await axios(`${process.env["NEXT_PUBLIC_API_BASEURL"]}/user/discord/connect`, {
+            method: "POST",
+            headers: {
+              Authorization: `Bearer ${jwt}`,
+              "Content-Type": "application/json",
+            },
+            data: {
+              code,
+              redirectUri,
+            },
+          });
+          
+          console.log("Discord連携成功:", response.data);
+          
+          // 成功したらユーザーページにリダイレクト
+          router.push("/user?discord_connected=true");
+        } catch (apiErr: any) {
+          console.error("API呼び出しエラー:", apiErr);
+          
+          // エラーレスポンスの詳細を取得
+          const errorMessage = apiErr.response?.data?.message || apiErr.message || "不明なエラー";
+          const errorStatus = apiErr.response?.status || "不明";
+          
+          setError(`Discord連携に失敗しました (${errorStatus}): ${errorMessage}`);
+          setLoading(false);
+        }
+      } catch (err: any) {
+        console.error("Discord連携処理エラー:", err);
+        setError(`Discord連携処理中にエラーが発生しました: ${err.message}`);
         setLoading(false);
       }
     };

@@ -294,7 +294,7 @@ export async function updateUserPassword(
             shadowlastchange: String(
               Math.floor(
                 (new Date().getTime() - new Date("1970/01/01").getTime()) /
-                  86400000
+                86400000
               )
             ),
           },
@@ -318,34 +318,77 @@ export async function updateUser(
   telephoneNumber: string,
   studentId: string
 ): Promise<void> {
+  // 環境変数のチェック
+  if (!adminPassword) {
+    throw new Error("ADMIN_PASSWORD環境変数が設定されていません");
+  }
+
+  console.log(`ユーザー更新開始: uid=${uid}, discordId=${discordId}`);
+
   const client = new Client(config);
-  await client.bind({
-    user: "cn=admin,dc=ldap,dc=ueckoken,dc=club",
-    pass: adminPassword,
-  });
 
   try {
-    await client.modifyAttribute({
-      dn: `uid=${uid},ou=people,dc=ldap,dc=ueckoken,dc=club`,
-      changes: [
-        {
-          operation: "replace",
-          modification: {
-            mail: email,
-            givenName: lastname,
-            sn: firstname,
-            cn: `${lastname} ${firstname}`,
-            displayname: discordId,
-            telephoneNumber: telephoneNumber,
-            employeeNumber: studentId,
-          },
-        },
-      ],
+    await client.bind({
+      user: "cn=admin,dc=ldap,dc=ueckoken,dc=club",
+      pass: adminPassword,
     });
-  } catch (e) {
-    if (e instanceof Error) {
-      throw new Error("Failed to update user:" + e.message);
+    console.log("LDAP接続成功");
+
+    try {
+      // ユーザーが存在するか確認
+      const userExists = await client.queryAttributes({
+        base: `uid=${uid},ou=people,dc=ldap,dc=ueckoken,dc=club`,
+        attributes: ["uid"],
+        options: {
+          scope: "base"
+        }
+      });
+
+      if (!userExists || userExists.length === 0) {
+        throw new Error(`ユーザーが見つかりません: uid=${uid}`);
+      }
+
+      console.log("ユーザー存在確認完了");
+
+      await client.modifyAttribute({
+        dn: `uid=${uid},ou=people,dc=ldap,dc=ueckoken,dc=club`,
+        changes: [
+          {
+            operation: "replace",
+            modification: {
+              mail: email,
+              givenName: lastname,
+              sn: firstname,
+              cn: `${lastname} ${firstname}`,
+              displayname: discordId,
+              telephoneNumber: telephoneNumber,
+              employeeNumber: studentId,
+            },
+          },
+        ],
+      });
+      console.log("ユーザー属性更新成功");
+    } catch (e) {
+      console.error("LDAP更新エラー:", e);
+      if (e instanceof Error) {
+        throw new Error(`ユーザー更新に失敗しました: ${e.message}`);
+      } else {
+        throw new Error("ユーザー更新に失敗しました: 不明なエラー");
+      }
+    }
+  } catch (bindError) {
+    console.error("LDAP接続エラー:", bindError);
+    if (bindError instanceof Error) {
+      throw new Error(`LDAP接続に失敗しました: ${bindError.message}`);
+    } else {
+      throw new Error("LDAP接続に失敗しました: 不明なエラー");
+    }
+  } finally {
+    try {
+      await client.unbind();
+      console.log("LDAP接続終了");
+    } catch (unbindError) {
+      console.error("LDAP切断エラー:", unbindError);
     }
   }
-  await client.unbind();
 }
