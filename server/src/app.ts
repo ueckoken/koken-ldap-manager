@@ -8,6 +8,10 @@ import { AuthController } from "./controllers/AuthController";
 import { TokenController } from "./controllers/TokenController";
 import jwt from "jsonwebtoken";
 import cors from "cors";
+import dotenv from "dotenv";
+
+// 環境変数を読み込む
+dotenv.config();
 
 const PORT = 8000;
 

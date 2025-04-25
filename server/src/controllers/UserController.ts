@@ -19,9 +19,89 @@ import {
   HttpError,
   Put,
 } from "routing-controllers";
+import axios from "axios";
 
 @JsonController("/user")
 export class UserController {
+  // Discord連携用のエンドポイント
+  @Post("/discord/connect")
+  @Authorized()
+  async connectDiscord(
+    @CurrentUser({ required: true }) user: any,
+    @BodyParam("code", { required: true }) code: string,
+    @BodyParam("redirectUri", { required: true }) redirectUri: string
+  ): Promise<any> {
+    try {
+      // Discord APIにアクセストークンをリクエスト
+      const tokenResponse = await axios.post(
+        "https://discord.com/api/oauth2/token",
+        new URLSearchParams({
+          client_id: process.env.DISCORD_CLIENT_ID || "",
+          client_secret: process.env.DISCORD_CLIENT_SECRET || "",
+          code,
+          grant_type: "authorization_code",
+          redirect_uri: redirectUri,
+        }),
+        {
+          headers: {
+            "Content-Type": "application/x-www-form-urlencoded",
+          },
+        }
+      );
+
+      const { access_token } = tokenResponse.data;
+
+      // Discord APIからユーザー情報を取得
+      const userResponse = await axios.get("https://discord.com/api/users/@me", {
+        headers: {
+          Authorization: `Bearer ${access_token}`,
+        },
+      });
+
+      const discordId = userResponse.data.id;
+
+      // ユーザー情報を更新
+      await updateUser(
+        user.uid,
+        discordId,
+        user.email,
+        user.firstName,
+        user.lastName,
+        user.telephoneNumber || "",
+        user.studentId || ""
+      );
+
+      return { success: true };
+    } catch (error) {
+      console.error("Discord連携エラー:", error);
+      throw new HttpError(500, "Discord連携に失敗しました");
+    }
+  }
+
+  @Post("/discord/disconnect")
+  @Authorized()
+  async disconnectDiscord(
+    @CurrentUser({ required: true }) user: any
+  ): Promise<any> {
+    try {
+      // Discord IDをクリア
+      await updateUser(
+        user.uid,
+        "",
+        user.email,
+        user.firstName,
+        user.lastName,
+        user.telephoneNumber || "",
+        user.studentId || ""
+      );
+
+      return { success: true };
+    } catch (error) {
+      console.error("Discord連携解除エラー:", error);
+      throw new HttpError(500, "Discord連携解除に失敗しました");
+    }
+  }
+
   @Authorized("manager")
   @Get("/list")
   async getAllUser(): Promise<LdapUser[]> {

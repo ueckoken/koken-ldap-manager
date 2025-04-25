@@ -1,6 +1,7 @@
 import axios from "axios";
 import router from "next/router";
 import { FC, useEffect, useState } from "react";
+import DiscordOAuth from "./DiscordOAuth";
 
 const User: FC<{
   jwt: string | null;
@@ -256,6 +257,12 @@ const User: FC<{
               value={discordId}
               onChange={(e) => setDiscordId(e.target.value)}
               className="input-field"
+              placeholder="Discord IDを入力するか、Discordと連携してください"
+            />
+            <DiscordOAuth
+              jwt={jwt}
+              discordId={discordId}
+              setDiscordId={setDiscordId}
             />
           </div>
 
