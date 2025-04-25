@@ -11,9 +11,9 @@ const DiscordOAuth: FC<DiscordOAuthProps> = ({ jwt, discordId, setDiscordId }) =
   const [isConnected, setIsConnected] = useState<boolean>(false);
   const [isLoading, setIsLoading] = useState<boolean>(false);
 
-  // Discord IDが数値のみで構成されているかチェック
+  // Discord IDが数値のみで構成されているかチェック、"NOSET"の場合は未連携
   useEffect(() => {
-    if (discordId && /^\d+$/.test(discordId)) {
+    if (discordId && discordId !== "NOSET" && /^\d+$/.test(discordId)) {
       setIsConnected(true);
     } else {
       setIsConnected(false);
@@ -47,7 +47,7 @@ const DiscordOAuth: FC<DiscordOAuthProps> = ({ jwt, discordId, setDiscordId }) =
         },
       });
       
-      setDiscordId("");
+      setDiscordId("NOSET"); // 空文字列ではなく"NOSET"に設定
       setIsConnected(false);
     } catch (error) {
       console.error("Discord連携解除に失敗しました", error);

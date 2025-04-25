@@ -126,15 +126,25 @@ export class UserController {
     @CurrentUser({ required: true }) user: any
   ): Promise<any> {
     try {
-      // Discord IDをクリア
+      // LDAPから最新のユーザー情報を取得
+      let currentUserInfo;
+      try {
+        currentUserInfo = await getUser(user.uid);
+        console.log("現在のユーザー情報取得成功:", currentUserInfo.username);
+      } catch (getUserError: any) {
+        console.error("ユーザー情報取得エラー:", getUserError.message);
+        throw new HttpError(500, `ユーザー情報の取得に失敗しました: ${getUserError.message}`);
+      }
+
+      // Discord IDを"NOSET"に設定
       await updateUser(
         user.uid,
-        "",
-        user.email,
-        user.firstName,
-        user.lastName,
-        user.telephoneNumber || "",
-        user.studentId || ""
+        "NOSET", // 空文字列ではなく"NOSET"に設定
+        currentUserInfo.email,
+        currentUserInfo.firstName,
+        currentUserInfo.lastName,
+        currentUserInfo.telephoneNumber || "",
+        currentUserInfo.studentId || ""
       );
 
       return { success: true };
@@ -184,7 +194,7 @@ export class UserController {
     @BodyParam("username", { required: true }) username: string,
     @BodyParam("firstName", { required: true }) firstName: string,
     @BodyParam("lastName", { required: true }) lastName: string,
-    @BodyParam("discordId", { required: true }) discordId: string,
+    @BodyParam("discordId") discordId: string = "NOSET", // 必須から任意に変更し、デフォルト値を"NOSET"に設定
     @BodyParam("email", { required: true }) email: string,
     @BodyParam("token", { required: true }) token: string,
     @BodyParam("password", { required: true }) password: string,
@@ -224,7 +234,7 @@ export class UserController {
     @BodyParam("username", { required: true }) username: string,
     @BodyParam("firstName", { required: true }) firstName: string,
     @BodyParam("lastName", { required: true }) lastName: string,
-    @BodyParam("discordId", { required: true }) discordId: string,
+    @BodyParam("discordId") discordId: string = "NOSET", // 必須から任意に変更し、デフォルト値を"NOSET"に設定
     @BodyParam("email", { required: true }) email: string,
     @BodyParam("phonenumber", { required: true }) phonenumber: string,
     @BodyParam("studentid", { required: true }) studentid: string
@@ -261,7 +271,7 @@ export class UserController {
     @BodyParam("username", { required: true }) username: string,
     @BodyParam("firstName", { required: true }) firstName: string,
     @BodyParam("lastName", { required: true }) lastName: string,
-    @BodyParam("discordId", { required: true }) discordId: string,
+    @BodyParam("discordId") discordId: string = "NOSET", // 必須から任意に変更し、デフォルト値を"NOSET"に設定
     @BodyParam("email", { required: true }) email: string,
     @BodyParam("phonenumber", { required: true }) phonenumber: string,
     @BodyParam("studentid", { required: true }) studentid: string,
