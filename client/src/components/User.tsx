@@ -112,6 +112,7 @@ const User: FC<{
           data: {
             firstName,
             lastName,
+            // Discord IDは手動更新しない（現在の値をそのまま送信）
             discordId,
             email,
             groups,
@@ -255,10 +256,11 @@ const User: FC<{
             <input
               type="text"
               value={discordId}
-              onChange={(e) => setDiscordId(e.target.value)}
-              className="input-field"
-              placeholder="Discord IDを入力するか、Discordと連携してください"
+              disabled
+              className="input-field bg-gray-100"
+              placeholder="Discord IDはDiscord連携機能からのみ更新可能です"
             />
+            <p className="text-xs text-gray-500 mt-1 mb-2">※Discord IDは手動では更新できません。下のボタンからDiscordと連携してください。</p>
             <DiscordOAuth
               jwt={jwt}
               discordId={discordId}

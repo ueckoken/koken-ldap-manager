@@ -325,24 +325,28 @@ export class UserController {
   async updateUser(
     @BodyParam("firstName", { required: true }) firstName: string,
     @BodyParam("lastName", { required: true }) lastName: string,
-    @BodyParam("discordId", { required: true }) discordId: string,
+    @BodyParam("discordId", { required: true }) discordId: string, // クライアントからは送信されるが使用しない
     @BodyParam("email", { required: true }) email: string,
     @BodyParam("telephoneNumber", { required: true }) telephoneNumber: string,
     @BodyParam("studentId", { required: true }) studentId: string,
     @BodyParam("groups", { required: true }) groups: string[],
     @Param("username") username: string
   ): Promise<any> {
+    // 現在のユーザー情報を取得して、Discord IDを維持する
+    const user = await getUser(username);
+
+    // Discord IDは手動更新させず、現在の値を使用する
     await updateUser(
       username,
-      discordId,
+      user.discordId, // クライアントから送信されたdiscordIdを無視
       email,
       firstName,
       lastName,
       telephoneNumber,
       studentId
     );
+
     // update groups
-    const user = await getUser(username);
     const oldGroups = user.groups;
     const newGroups = groups;
     const addGroups = newGroups.filter((x) => !oldGroups.includes(x));
@@ -362,14 +366,18 @@ export class UserController {
     @CurrentUser({ required: true }) user: any,
     @BodyParam("firstName", { required: true }) firstName: string,
     @BodyParam("lastName", { required: true }) lastName: string,
-    @BodyParam("discordId", { required: true }) discordId: string,
+    @BodyParam("discordId", { required: true }) discordId: string, // クライアントからは送信されるが使用しない
     @BodyParam("email", { required: true }) email: string,
     @BodyParam("telephoneNumber", { required: true }) telephoneNumber: string,
     @BodyParam("studentId", { required: true }) studentId: string
   ): Promise<any> {
+    // 現在のユーザー情報を取得して、Discord IDを維持する
+    const currentUserInfo = await getUser(user.uid);
+
+    // Discord IDは手動更新させず、現在の値を使用する
     await updateUser(
       user.uid,
-      discordId,
+      currentUserInfo.discordId, // クライアントから送信されたdiscordIdを無視
       email,
       firstName,
       lastName,
