@@ -10,7 +10,7 @@
     "fmt": "prettier --write \"**/*.{ts,tsx}\""
   },
   "dependencies": {
-    "@types/node": "18.19.80",
+    "@types/node": "18.19.103",
     "@types/react": "18.3.18",
     "@types/react-dom": "18.3.5",
     "axios": "^1.2.3",
